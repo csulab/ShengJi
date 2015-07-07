@@ -9,7 +9,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
@@ -18,12 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="com.csslab.shengji.service.ServerService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
+        <activity
+            android:name=".GameActivity"
+            android:label="@string/title_activity_game"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name=".TestActivity"
+            android:label="@string/title_activity_test"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
     </application>
 
 </manifest>

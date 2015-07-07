@@ -7,28 +7,28 @@
     tools:context="com.csslab.shengji.ui.MainActivity">
 
     <Button
-        android:id="@+id/set_user_name_btn"
+        android:id="@+id/btn_setting"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/set_user_place_btn"
-        android:text="@string/set_user_name"
+        android:layout_above="@+id/btn_history"
+        android:text="@string/setting"
         />
 
     <Button
-        android:id="@+id/set_user_place_btn"
+        android:id="@+id/btn_history"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/set_user_place"
+        android:text="@string/history"
         />
 
     <Button
-        android:id="@+id/game_start_btn"
+        android:id="@+id/btn_start_game"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/set_user_place_btn"
+        android:layout_below="@+id/btn_history"
         android:text="@string/game_start"
         />
 

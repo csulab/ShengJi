@@ -7,7 +7,7 @@
     <string name="title_activity_main">MainActivity</string>
 
     <string name="game_start">开始游戏</string>
-    <string name="set_user_name">用户名设置</string>
-    <string name="set_user_place">座位设置</string>
+    <string name="setting">设置</string>
+    <string name="history">历史记录</string>
 
 </resources>

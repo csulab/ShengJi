@@ -2,12 +2,19 @@ package com.csslab.shengji.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +22,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.Poker;
 import com.csslab.shengji.core.PokerDesk;
+import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
 
 import java.lang.ref.WeakReference;
@@ -42,14 +51,35 @@ public class GameActivity extends Activity {
     private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
     private Player sPlayer;
 
+    private String sIP = "";
+    private final int SERVER_PORT = 8191;
+    private ClientManagement client = null;
+
+    private GameService.GameBinder gameBinder = null;
+    private ServiceConnection srv_conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            gameBinder = (GameService.GameBinder)service;
+            gameBinder.createServer();
+            sIP = "127.0.0.1";
+            client = new ClientManagement(sIP,SERVER_PORT,mHandler);
+            Log.d("sj", "--Service Connected--");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d("sj","--Service disconnected--");
+        }
+    };
+
     /**
      * 继承Handle类实现主线程更新UI
      */
-    private static class MyHandle extends Handler {
+    private static class MyHandler extends Handler {
 
         private final WeakReference<GameActivity> mActivity;
 
-        public MyHandle(GameActivity activity) {
+        public MyHandler(GameActivity activity) {
             mActivity = new WeakReference<GameActivity>(activity);
         }
 
@@ -60,20 +90,13 @@ public class GameActivity extends Activity {
             GameActivity activity = mActivity.get();
             if (activity != null) {
                 switch (msg.what) {
-                    case 0:
-                        if (msg.obj == null && msg.obj instanceof Poker) {
-                            System.out.println("obj error");
-                        } else {
-                            activity.mPokerList = activity.sPlayer.getAllList();
-                            try {
-                                activity.setCard(activity.mPokerList);
-                            } catch (Exception ex) {
-                                System.out.println(ex.toString());
-                            }
-                        }
+                    case ClientManagement.GAME_START_TIPS:
+                        activity.showTips((String)msg.obj);
                         break;
                     case ClientManagement.TAKEING:
-
+                        Poker p = (Poker)msg.obj;
+                        activity.mPokerList.add(p);
+                        activity.setCard(activity.mPokerList);
                         break;
                     default:
                         break;
@@ -82,7 +105,7 @@ public class GameActivity extends Activity {
         }
     }
 
-    private final MyHandle mHandle = new MyHandle(this);
+    private final MyHandler mHandler = new MyHandler(this);
 
     private final Runnable sRunnable = new Runnable() {
         @Override
@@ -96,25 +119,48 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        Intent intent = getIntent();
+        if(intent.getBooleanExtra("gameHost",false)){
+            Intent srv_intent = new Intent();
+            srv_intent.setAction("com.csslab.shengji.service.GAME_SERVICE");
+            boolean flag = bindService(srv_intent,srv_conn,BIND_AUTO_CREATE);
+            if(flag == false){
+                Toast.makeText(GameActivity.this, "错误：无法创建游戏！", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(GameActivity.this,"创建游戏成功，请打开热点等待其他玩家加入...",Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
+            WifiInfo wInfo = ((WifiManager)getSystemService(WIFI_SERVICE)).getConnectionInfo();
+            int serverIP =wInfo.getIpAddress();
+            sIP = (serverIP & 0xff)+"."+(serverIP>>8 & 0xff)+"."+(serverIP>>16 & 0xff)+".1";
+            //client = new ClientManagement(sIP,8192,mHandler);
+            client = new ClientManagement("10.0.2.2",8192,mHandler);//模拟器客户端测试专用
+        }
+
         // 初始化所有布局和参数
         setAllLayout();
 
         // 初始化mPokerList
         mPokerList = new ArrayList<Poker>();
 
-        Poker p1 = new Poker(Poker.PokerColor.CLUB, 4, "a1_4");
-        Poker p2 = new Poker(Poker.PokerColor.HEARTS, 10, "a3_10");
-        Poker p3 = new Poker(Poker.PokerColor.SPADE, 7, "a4_7");
-        Poker p4 = new Poker(Poker.PokerColor.DIAMONDS, 13, "a2_13");
-        mPokerList.add(p1);
-        mPokerList.add(p2);
-        mPokerList.add(p3);
-        mPokerList.add(p4);
-
-        setCard(mPokerList);
+//        Poker p1 = new Poker(Poker.PokerColor.CLUB, 4, "a1_4");
+//        Poker p2 = new Poker(Poker.PokerColor.HEARTS, 10, "a3_10");
+//        Poker p3 = new Poker(Poker.PokerColor.SPADE, 7, "a4_7");
+//        Poker p4 = new Poker(Poker.PokerColor.DIAMONDS, 13, "a2_13");
+//        mPokerList.add(p1);
+//        mPokerList.add(p2);
+//        mPokerList.add(p3);
+//        mPokerList.add(p4);
+//
+//        setCard(mPokerList);
 
     }
 
+    private void showTips(String msg){
+        Toast.makeText(GameActivity.this,msg,Toast.LENGTH_SHORT).show();
+    }
     /**
      * 重写返回键
      *

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.Poker;
 import com.csslab.shengji.core.PokerDesk;
+import com.csslab.shengji.tools.ClientManagement;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,14 +34,13 @@ public class GameActivity extends Activity {
     private RelativeLayout main_poker_layout, east_pPoker_layout, south_pPoker_layout,
             west_pPoker_layout, north_pPoker_layout;
     private boolean isSouthEmpty, isCardEmpty, isPlaceCard, canShout;
-    private TextView west_player, east_player, south_player, north_player, current_poker,
+    private TextView west_pName, east_pName, south_pName, north_pName, current_poker,
             current_score, statistics, remain_poker;
     private LinearLayout reselect, send_poker, place_poker, look_poker, shout_poker;
     private Integer currentRound, currentColor = 0;
     private Poker.PokerColor pokerColor = null;
     private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
     private Player sPlayer;
-    private PokerDesk pokerDesk;
 
     /**
      * 继承Handle类实现主线程更新UI
@@ -71,6 +71,9 @@ public class GameActivity extends Activity {
                                 System.out.println(ex.toString());
                             }
                         }
+                        break;
+                    case ClientManagement.TAKEING:
+
                         break;
                     default:
                         break;
@@ -139,19 +142,21 @@ public class GameActivity extends Activity {
         }
     }
 
+
+
     /**
      * 设置本方扑克牌位置及牌面
      *
      * @param pokerList 传入的扑克牌列表
      */
     public void setCard(List<Poker> pokerList) {
-        // 清空card_layout中所有显示的扑克牌
+        // 清空main_poker_layout中所有显示的扑克牌
         if (!isCardEmpty) {
             for (int i = 0; i < imageViews.length; i++) {
                 main_poker_layout.removeView(imageViews[i]);
             }
         }
-        // 获取传入的cardList大小
+        // 获取传入的pokerList大小
         int size = pokerList.size();
 
         // 设置本方牌对应的图片容器，并初始化
@@ -264,6 +269,7 @@ public class GameActivity extends Activity {
         // 本方扑克牌摆放位置的布局
         main_poker_layout = (RelativeLayout) findViewById(R.id.main_poker_layout);
 
+        // 打出的扑克牌的布局
         west_pPoker_layout = (RelativeLayout) findViewById(R.id.west_pPoker);
         north_pPoker_layout = (RelativeLayout) findViewById(R.id.north_pPoker);
         south_pPoker_layout = (RelativeLayout) findViewById(R.id.south_pPoker);
@@ -312,10 +318,10 @@ public class GameActivity extends Activity {
         look_poker.setX(dw / 20 * 9);
 
         // 初始化玩家昵称
-        west_player = (TextView) findViewById(R.id.west_pName);
-        east_player = (TextView) findViewById(R.id.east_pName);
-        north_player = (TextView) findViewById(R.id.north_pName);
-        south_player = (TextView) findViewById(R.id.south_pName);
+        west_pName = (TextView) findViewById(R.id.west_pName);
+        east_pName = (TextView) findViewById(R.id.east_pName);
+        north_pName = (TextView) findViewById(R.id.north_pName);
+        south_pName = (TextView) findViewById(R.id.south_pName);
 
         // 初始化所有统计数据
         current_poker = (TextView) findViewById(R.id.current_poker);

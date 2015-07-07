@@ -2,16 +2,24 @@ package com.csslab.shengji.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.csslab.shengji.core.Poker;
+import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
 
 import java.lang.ref.WeakReference;
@@ -19,11 +27,30 @@ import java.lang.ref.WeakReference;
 public class TestActivity extends Activity {
     private Button btn_start = null;
     private TextView tv_test = null;
+
     private boolean isServer = false;
     private String sIP = "";
     private final int SERVER_PORT = 8191;
     private ClientManagement client = null;
     private Handler mHandler = null;
+
+    private GameService.GameBinder gameBinder = null;
+    private ServiceConnection srv_conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            gameBinder = (GameService.GameBinder)service;
+            gameBinder.createServer();
+            sIP = "127.0.0.1";
+            client = new ClientManagement(sIP,SERVER_PORT,mHandler);
+            Log.d("sj", "--Service Connected--");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d("sj","--Service disconnected--");
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,10 +71,15 @@ public class TestActivity extends Activity {
                 alertDialogBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        //isServer = true;
-                        sIP = "127.0.0.1";
-                        client = new ClientManagement(sIP,SERVER_PORT,mHandler);
+                        Intent intent = new Intent();
+                        intent.setAction("com.csslab.shengji.service.GAME_SERVICE");
+                        boolean flag = bindService(intent,srv_conn,BIND_AUTO_CREATE);
+                        if(flag == false){
+                            Toast.makeText(TestActivity.this,"错误：无法创建游戏！",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(TestActivity.this,"创建游戏成功，请打开热点等待其他玩家加入...",Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener(){
@@ -56,7 +88,8 @@ public class TestActivity extends Activity {
                         WifiInfo wInfo = ((WifiManager)getSystemService(WIFI_SERVICE)).getConnectionInfo();
                         int serverIP =wInfo.getIpAddress();
                         sIP = (serverIP & 0xff)+"."+(serverIP>>8 & 0xff)+"."+(serverIP>>16 & 0xff)+".1";
-                        client = new ClientManagement(sIP,SERVER_PORT,mHandler);
+                        //client = new ClientManagement(sIP,8192,mHandler);
+                        client = new ClientManagement("10.0.2.2",8192,mHandler);//模拟器客户端测试专用
                     }
                 });
                 alertDialogBuilder.show();
@@ -64,8 +97,19 @@ public class TestActivity extends Activity {
         });
     }
 
-    private void createServer(){
+    private void showTips(String msg){
+        Toast.makeText(TestActivity.this,msg,Toast.LENGTH_SHORT).show();
+    }
+    private void showPoker(String poker){
+        //tv_test.append(poker+" ");
+        tv_test.setText(poker);
+    }
 
+    @Override
+    protected void onDestroy() {
+        gameBinder.stopServer();
+        unbindService(srv_conn);
+        super.onDestroy();
     }
 
     static class UIHandler extends Handler{
@@ -78,7 +122,13 @@ public class TestActivity extends Activity {
         public void handleMessage(Message msg) {
             if(mActivity.get() != null){
                 switch (msg.what){
-                    case 0:
+                    case ClientManagement.GAME_START_TIPS://显示原始消息
+                        Log.d("sj", "Test Activity.handleMessage "+msg.obj.toString());
+                        ((TestActivity)mActivity.get()).showTips((String) msg.obj);
+                        break;
+                    case ClientManagement.TAKEING:
+                        Poker p = (Poker)msg.obj;
+                        ((TestActivity) mActivity.get()).showPoker(p.toString());
                         break;
                     default:
                         break;

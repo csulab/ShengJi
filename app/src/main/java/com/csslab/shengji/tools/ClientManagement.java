@@ -4,6 +4,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.csslab.shengji.core.Poker;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,8 +20,9 @@ import java.net.UnknownHostException;
  * Created by Administrator on 2015/7/7 0007.
  */
 public class ClientManagement {
-    public final static int TAKEING = 1000;
-    public final static int TAKEED = 999;
+    public final static int GAME_START_TIPS = 1000;
+    public final static int TAKEING = 999;
+    public final static int TAKEED = 998;
     private Handler mHandler = null;
     private Thread clientThread = null;
     private Thread rcvThread = null;
@@ -33,6 +40,10 @@ public class ClientManagement {
         rcvThread.start();
     }
 
+    public void stop(){
+
+    }
+
     class clientWorker implements Runnable{
         @Override
         public void run() {
@@ -41,11 +52,14 @@ public class ClientManagement {
                     //String ip = (serverIP & 0xff)+"."+(serverIP>>8 & 0xff)+"."+(serverIP>>16 & 0xff)+".1";
                     //String ip="10.0.2.2";
                     clientSocket = new Socket(srv_host,srv_port);
+                    if(clientSocket.isClosed() == true && clientSocket.isConnected() == false){
+                        Message msg = mHandler.obtainMessage();
+                        msg.what = 0;
+                        msg.obj = "无法和游戏创建者连接上，请确认是否加入热点连接！";
+                        mHandler.sendMessage(msg);
+                    }
                     Log.d("sj", "client.isconnect" + clientSocket.isConnected());
-                    Log.d("sj", "client.iscloseed"+clientSocket.isClosed());
-                }
-                if(clientSocket.isConnected() == false && clientSocket.isClosed() == true){
-                    Log.d("sj", "Server is closed!");
+                    Log.d("sj", "client.iscloseed" + clientSocket.isClosed());
                 }
                 ClientManagement.this.dis = new DataInputStream(clientSocket.getInputStream());
                 ClientManagement.this.dos = new DataOutputStream(clientSocket.getOutputStream());
@@ -71,18 +85,34 @@ public class ClientManagement {
                     if(str != null){
                         isServerCanRead = true;
                         Log.d("sj","rcvWoker:"+str);
-                        Message msg = mHandler.obtainMessage();
-                        msg.what = 0;
-                        msg.obj = str;
-                        mHandler.sendMessage(msg);
+                        String[] msg = str.split("\\|");
+                        //Log.d("sj", "rcvWoker:"+str+","+msg.length+","+msg[0]+","+msg[1]);
+                        Message m = mHandler.obtainMessage();
+                        m.what = Integer.parseInt(msg[0]);
+                        if(m.what == TAKEING){
+                            try{
+                                JSONObject json = new JSONObject(msg[1]);
+                                Poker p = new Poker(Poker.PokerColor.values()[json.getInt("color")],
+                                        json.getInt("size"),json.getString("img"));
+                                p.setValue(json.getInt("value"));
+                                m.obj = p;
+                            }
+                            catch (JSONException jex){
+                                Log.d("sj", "run "+jex.toString());
+                            }
+                        }
+                        else{
+                            m.obj = msg[1];
+                        }
+                        mHandler.sendMessage(m);
                         //测试：回发给服务端
-                        try{
+                        /*try{
                             dos.writeUTF("client rcv:"+str);
                             dos.flush();
                         }
                         catch (IOException ex){
                             Log.d("sj", ex.toString());
-                        }
+                        }*/
                     }
                 }
                 catch (IOException ex) {

@@ -10,6 +10,7 @@ import com.csslab.shengji.core.OnPlayerTakedListener;
 import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.PlayerEvent;
 import com.csslab.shengji.core.PokerDesk;
+import com.csslab.shengji.tools.ClientManagement;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,53 +28,29 @@ import java.util.concurrent.Executors;
 public class GameService extends Service {
     private  int count = 0;
     private String msg ="init value:";
-    private InfoBinder infoBinder = new InfoBinder();
+    private GameBinder gameBinder = new GameBinder();
     //business logic
     private PokerDesk pd = null;
     private Player[] players = new Player[5];
-    //客户端消息
-    /*private Queue<String> sendQueue = null;
-    private Queue<String> rcvQueue = null;
-    private Socket clientSocket;
-    private Thread clientSendThread = null;
-    private Thread clientRcvThread = null;
-    */
     //服务端
     private static final int SERVERPORT = 8191;
     private static final int CLIENTPORT = 8192;
     //private static final int CLIENTPORT = 8191;
     ServerSocket Server;
     private Thread listenerThread = null;//监听线程
-    private Thread srvSendThread = null;
     private Thread srvRcvThread = null;
-    ExecutorService mThreadPool = Executors.newFixedThreadPool(8); //线程池
+    //ExecutorService mThreadPool = Executors.newFixedThreadPool(8); //线程池
 
     private Boolean isServer = false;
-    private Queue<String> srvQueue = null;
-    private Vector<Socket> clients = null;
     private Map<Player,Socket> client_map = null;
     private int player_count = 0;
 
-    public class InfoBinder extends Binder {
-        public String getMsg(){
-            return msg;
-        }
-        public int getCount(){
-            return count;
-        }
-        public int getMsgCount(){return 0;}
-
-        public void sendMsg(String value){
-            //sendQueue.offer(value);
-        }
-        public String readMsg(){
-            return null;
-        }
+    public class GameBinder extends Binder {
         //服务端相关
         public void createServer(){
             if(!isServer){
                 Log.d("sj","device is server.now create.");
-                clients = new Vector<Socket>();
+                //clients = new Vector<Socket>();
                 client_map = new HashMap<>();
                 //服务端监听线程
                 listenerThread = new Thread(){
@@ -86,14 +63,11 @@ public class GameService extends Service {
                                 }
                                 Socket s = Server.accept();
                                 player_count++;
-                                //clients.add(s);
-                                //mThreadPool.execute(new ServerSender(s));
-                                //mThreadPool.execute(new ServerReceiver(s));
                                 Player p = new Player("player"+player_count);
                                 p.setSeat(player_count);
                                 client_map.put(p,s);
                                 players[player_count] = p;
-                                sendSrvMsg(p,"Welcome,"+p.getName()+",your seat is "+player_count);
+                                sendSrvMsg(p,ClientManagement.GAME_START_TIPS+"|"+"Welcome,"+p.getName()+",your seat is "+player_count);
                                 try{
                                     Thread.sleep(1000);
                                 }
@@ -108,7 +82,7 @@ public class GameService extends Service {
                                         Log.d("sj", "run "+ex.toString());
                                     }
                                     Log.d("sj","start game right now.");
-                                    sendAll("start game right now.");
+                                    sendAll(ClientManagement.GAME_START_TIPS+"|"+"start game right now.");
                                     try{
                                         Thread.sleep(1000);
                                     }
@@ -118,7 +92,7 @@ public class GameService extends Service {
                                     beginGame();
                                 }
                                 else{
-                                    sendAll("waitting for other "+(4-player_count)+" player(s)");
+                                    sendAll(ClientManagement.GAME_START_TIPS+"|"+"waitting for other "+(4-player_count)+" player(s)");
                                     Log.d("sj", "waitting for other "+(4-player_count)+" players");
                                 }
                                 new Thread(new ServerReceiver(p)).start();
@@ -167,15 +141,8 @@ public class GameService extends Service {
                 entry.getKey().setPlayerEvent(new OnPlayerTakedListener() {
                     @Override
                     public void onTaked(PlayerEvent event) {
-                        try{
-                            Log.d("sj", "onTaked "+event.getNewPoker().toString());
-                            DataOutputStream dos =new DataOutputStream(client_map.get((Player)event.getSource()).getOutputStream());
-                            dos.writeUTF(event.getNewPoker().toString());
-                            dos.flush();
-                        }
-                        catch (IOException ex){
-                            Log.d("sj",ex.toString());
-                        }
+                        //sendSrvMsg((Player)event.getSource(), ClientManagement.TAKEING+"|"+event.getNewPoker());
+                        sendSrvMsg((Player)event.getSource(), ClientManagement.TAKEING+"|"+event.getNewPoker().toJSONString());
                     }
                 });
             }
@@ -183,26 +150,24 @@ public class GameService extends Service {
             //pd = new PokerDesk(players[1],players[2],p3,p4);
         }
         public void stopServer(){
-            if(clients != null){
-                if(clients.size() > 0){
-                    for(Socket client:clients){
-                        try
-                        {
-                            client.close();
+            if(client_map != null){
+                if(!client_map.isEmpty()){
+                    for(Map.Entry<Player,Socket> entry:client_map.entrySet()){
+                        try{
+                            entry.getValue().close();
                         }
                         catch (IOException ex){
-                            ex.printStackTrace();
+                            Log.d("sj", "stopServer "+ex.toString());
                         }
                         finally {
-                            client = null;
-                            clients.remove(client);
+                            //client_map.remove(entry.getKey());
                         }
                     }
                 }
-            }
-            clients = null;
-            if(srvSendThread != null){
-                srvSendThread.interrupt();
+                if(!client_map.isEmpty()){
+                    client_map.clear();
+                }
+                client_map = null;
             }
             if(srvRcvThread != null){
                 srvRcvThread.interrupt();
@@ -213,17 +178,15 @@ public class GameService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d("sj","Service is Binded");
-        return infoBinder;
+        return gameBinder;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        //客户端收发数据
-        srvQueue = new LinkedList<String>();
-        //srvQueue.offer("Server is Ok.");
         Log.d("sj", "Service is created");
     }
+
 
     class ServerReceiver implements  Runnable{
         private Socket socket;
@@ -262,32 +225,6 @@ public class GameService extends Service {
                 }
                 catch (IOException ex){
                     //System.out.println("Server Rcv Error:"+ex.toString());
-                }
-            }
-        }
-    }
-
-    class ServerSender implements Runnable{
-        private Socket socket;
-        public ServerSender(Socket s){
-            this.socket = s;
-        }
-        @Override
-        public void run() {
-            System.out.println("Server send!");
-            while(true){
-                try{
-                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                    synchronized (this){
-                        if(!srvQueue.isEmpty()){
-                            System.out.println("Server send msg");
-                            dos.writeUTF(srvQueue.poll());
-                            dos.flush();
-                        }
-                    }
-                }
-                catch (IOException ex){
-                    //System.out.println("Server Sender Error:"+ex.toString());
                 }
             }
         }

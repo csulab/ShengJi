@@ -9,5 +9,7 @@
     <string name="game_start">开始游戏</string>
     <string name="setting">设置</string>
     <string name="history">历史记录</string>
+    <string name="test">测试</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

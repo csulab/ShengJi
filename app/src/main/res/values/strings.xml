@@ -5,4 +5,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="game_start">开始游戏</string>
+    <string name="set_user_name">用户名设置</string>
+    <string name="set_user_place">座位设置</string>
+
 </resources>

@@ -24,7 +24,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ServerService extends Service {
+public class GameService extends Service {
     private  int count = 0;
     private String msg ="init value:";
     private InfoBinder infoBinder = new InfoBinder();

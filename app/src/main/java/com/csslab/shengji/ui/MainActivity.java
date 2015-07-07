@@ -23,6 +23,15 @@ public class MainActivity extends Activity {
             }
         });
 
+        Button btn_start_game = (Button) findViewById(R.id.btn_start_game);
+        btn_start_game.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 }

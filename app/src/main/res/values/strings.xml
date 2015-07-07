@@ -10,6 +10,12 @@
     <string name="setting">设置</string>
     <string name="history">历史记录</string>
     <string name="test">测试</string>
+    <string name="shout_poker">叫 牌</string>
+    <string name="place_poker">埋 牌</string>
+    <string name="reselect">重 选</string>
+    <string name="send_poker">出 牌</string>
+    <string name="look_poker">看底牌</string>
+    <string name="remain">余牌</string>
     <string name="title_activity_test">TestActivity</string>
 
 </resources>

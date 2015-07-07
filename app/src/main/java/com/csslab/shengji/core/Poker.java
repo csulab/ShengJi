@@ -1,7 +1,7 @@
-package com.csslab.shengji.gamelogic;
+package com.csslab.shengji.core;
 
 /**
- * Created by Administrator on 2015/7/6 0006.
+ * Created by Administrator on 2015/7/7 0007.
  */
 public class Poker {
     //花色枚举变量

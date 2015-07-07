@@ -116,7 +116,8 @@
                     android:id="@+id/west_pPoker"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true">
+                    android:background="#0F0"
+                    >
 
                 </RelativeLayout>
 
@@ -132,7 +133,8 @@
                     android:id="@+id/north_pPoker"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentTop="true">
+                    android:background="#0F0"
+                    >
 
                 </RelativeLayout>
 
@@ -140,7 +142,7 @@
                     android:id="@+id/center_pPoker"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerInParent="true">
+                    >
 
                 </RelativeLayout>
 
@@ -148,7 +150,8 @@
                     android:id="@+id/south_pPoker"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentBottom="true">
+                    android:background="#0F0"
+                    >
 
                 </RelativeLayout>
 
@@ -164,7 +167,8 @@
                     android:id="@+id/east_pPoker"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true">
+                    android:background="#0F0"
+                    >
 
                 </RelativeLayout>
 

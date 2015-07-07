@@ -32,6 +32,13 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
+        <service android:name="com.csslab.shengji.service.GameService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.csslab.shengji.service.GAME_SERVICE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -44,6 +44,7 @@ public class TestActivity extends Activity {
                 alertDialogBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         //isServer = true;
                         sIP = "127.0.0.1";
                         client = new ClientManagement(sIP,SERVER_PORT,mHandler);

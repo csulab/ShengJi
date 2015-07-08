@@ -29,6 +29,7 @@ import com.csslab.shengji.core.Poker;
 import com.csslab.shengji.core.PokerDesk;
 import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
+import com.csslab.shengji.tools.MessageManagement;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -90,10 +91,10 @@ public class GameActivity extends Activity {
             GameActivity activity = mActivity.get();
             if (activity != null) {
                 switch (msg.what) {
-                    case ClientManagement.GAME_START_TIPS:
+                    case MessageManagement.R_GAME_TIPS:
                         activity.showTips((String)msg.obj);
                         break;
-                    case ClientManagement.TAKEING:
+                    case MessageManagement.R_TAKEING:
 //                        Poker p = (Poker)msg.obj;
 //                        activity.mPokerList.add(p);
                         activity.mPokerList = Poker.parseList(msg.obj.toString());

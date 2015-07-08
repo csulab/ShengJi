@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.csslab.shengji.core.Poker;
 import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
+import com.csslab.shengji.tools.MessageManagement;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -123,11 +124,11 @@ public class TestActivity extends Activity {
         public void handleMessage(Message msg) {
             if(mActivity.get() != null){
                 switch (msg.what){
-                    case ClientManagement.GAME_START_TIPS://显示原始消息
+                    case MessageManagement.R_GAME_TIPS://显示原始消息
                         Log.d("sj", "Test Activity.handleMessage "+msg.obj.toString());
                         ((TestActivity)mActivity.get()).showTips((String) msg.obj);
                         break;
-                    case ClientManagement.TAKEING:
+                    case MessageManagement.R_TAKEING:
                         Log.d("sj", "handleMessage "+msg.obj);
                         List<Poker> list = Poker.parseList(msg.obj.toString());
                         String cur_poker = "";

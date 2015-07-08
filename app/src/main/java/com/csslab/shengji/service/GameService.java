@@ -11,6 +11,7 @@ import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.PlayerEvent;
 import com.csslab.shengji.core.PokerDesk;
 import com.csslab.shengji.tools.ClientManagement;
+import com.csslab.shengji.tools.MessageManagement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,7 +74,7 @@ public class GameService extends Service {
                                 client_map.put(p,s);
                                 players[player_count] = p;
                                 try{
-                                    sendToPlayer(p,ClientManagement.GAME_START_TIPS,"欢迎你，"+p.getName()+"！分配的座位号是"+player_count);
+                                    sendToPlayer(p, MessageManagement.R_GAME_TIPS,"欢迎你，"+p.getName()+"！分配的座位号是"+player_count);
                                     Thread.sleep(1000);
                                 }
                                 catch (InterruptedException ex){
@@ -83,7 +84,7 @@ public class GameService extends Service {
                                     try{
                                         Thread.sleep(1000);
                                         Log.d("sj","start game right now.");
-                                        sendToPlayer(ClientManagement.GAME_START_TIPS,"游戏即将开始！");
+                                        sendToPlayer(MessageManagement.R_GAME_TIPS,"游戏即将开始！");
                                         beginGame();
                                         Thread.sleep(1000);
                                     }
@@ -92,7 +93,7 @@ public class GameService extends Service {
                                     }
                                 }
                                 else{
-                                    sendToPlayer(ClientManagement.GAME_START_TIPS,"等待其他"+(4-player_count)+"个玩家加入！");
+                                    sendToPlayer(MessageManagement.R_GAME_TIPS,"等待其他"+(4-player_count)+"个玩家加入！");
                                     Log.d("sj", "waitting for other "+(4-player_count)+" players");
                                 }
                                 new Thread(new ServerReceiver(p)).start();
@@ -166,7 +167,7 @@ public class GameService extends Service {
                     public void onTaking(PlayerEvent event) {
                         String raw_data = ((Player)event.getSource()).getPokerListJsonString();
                         Log.d("listener", "onTaking ");
-                        sendToPlayer(entry.getKey(),ClientManagement.TAKEING,raw_data);
+                        sendToPlayer(entry.getKey(),MessageManagement.R_TAKEING,raw_data);
                     }
 
                     @Override

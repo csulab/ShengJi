@@ -120,10 +120,10 @@ public class GameService extends Service {
             }
         }
         //send to all player
-        protected void sendToPlayer(int Protocol,String data){
+        protected void sendToPlayer(int protocol,String data){
             try{
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("protocol",Protocol);
+                jsonObject.put("protocol",protocol);
                 jsonObject.put("data",data);
                 sendAll(jsonObject.toString());
             }
@@ -131,10 +131,10 @@ public class GameService extends Service {
                 Log.d("sj", "sendToPlayer "+jex.toString());
             }
         }
-        protected void sendToPlayer(Player player,int Protocol,String data){
+        protected void sendToPlayer(Player player,int protocol,String data){
             try{
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("protocol",Protocol);
+                jsonObject.put("protocol",protocol);
                 jsonObject.put("data",data);
                 sendSrvMsg(player,jsonObject.toString());
             }
@@ -160,16 +160,42 @@ public class GameService extends Service {
             //players[3] = p3;
             //players[4] = p4;
 
-            for(Map.Entry<Player,Socket> entry:client_map.entrySet()){
+            for(final Map.Entry<Player,Socket> entry:client_map.entrySet()){
                 entry.getKey().setPlayerEvent(new OnPlayerTakedListener() {
                     @Override
                     public void onTaking(PlayerEvent event) {
                         String raw_data = ((Player)event.getSource()).getPokerListJsonString();
-                        sendToPlayer(ClientManagement.TAKEING,raw_data);
+                        Log.d("listener", "onTaking ");
+                        sendToPlayer(entry.getKey(),ClientManagement.TAKEING,raw_data);
+                    }
+
+                    @Override
+                    public void onTaked(PlayerEvent event) {
+
+                    }
+
+                    @Override
+                    public void onBottomTaked(PlayerEvent event) {
+
+                    }
+
+                    @Override
+                    public void onBottomTaking(PlayerEvent event) {
+
+                    }
+
+                    @Override
+                    public void onRevolution(Player event) {
+
                     }
                 });
             }
-            pd = new PokerDesk(client_map.keySet());
+            try{
+                pd = new PokerDesk(client_map.keySet());
+            }
+            catch (Exception ex){
+                Log.d("sj", "beginGame :"+ex.toString());
+            }
             //pd = new PokerDesk(players[1],players[2],p3,p4);
         }
         public void stopServer(){

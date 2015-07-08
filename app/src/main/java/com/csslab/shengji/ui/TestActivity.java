@@ -121,7 +121,6 @@ public class TestActivity extends Activity {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.d("UIHandler", "handleMessage "+Message.obtain(this,ClientManagement.GAME_START_TIPS).obj);
             if(mActivity.get() != null){
                 switch (msg.what){
                     case ClientManagement.GAME_START_TIPS://显示原始消息
@@ -129,6 +128,7 @@ public class TestActivity extends Activity {
                         ((TestActivity)mActivity.get()).showTips((String) msg.obj);
                         break;
                     case ClientManagement.TAKEING:
+                        Log.d("sj", "handleMessage "+msg.obj);
                         List<Poker> list = Poker.parseList(msg.obj.toString());
                         String cur_poker = "";
                         for(Poker p:list){

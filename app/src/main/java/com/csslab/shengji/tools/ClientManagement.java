@@ -23,9 +23,17 @@ import java.util.List;
  * Created by Administrator on 2015/7/7 0007.
  */
 public class ClientManagement {
+    //write
+    public final static int SET_USER_NAME = 1000;
+    //read
     public final static int GAME_START_TIPS = 1000;
-    public final static int TAKEING = 999;
-    public final static int TAKEED = 998;
+    public final static int USER_READY = 999;
+    public final static int DESK_READY = 0;
+    public final static int SHOUT_POKER = 0;
+    public final static int TAKEING = 998;
+    public final static int TAKEED = 997;
+    public final static int PLAYING = 0;
+
     private Handler mHandler = null;
     private Thread clientThread = null;
     private Thread rcvThread = null;

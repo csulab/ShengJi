@@ -5,4 +5,8 @@ package com.csslab.shengji.core;
  */
 public interface OnPlayerTakedListener {
     void onTaking(PlayerEvent event);
+    void onTaked(PlayerEvent event);
+    void onBottomTaking(PlayerEvent event);
+    void onBottomTaked(PlayerEvent event);
+    void onRevolution(Player event);
 }

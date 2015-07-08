@@ -29,7 +29,7 @@ public class PokerDesk {
     /*public PokerDesk(){
 
     }*/
-    public PokerDesk(Set<Player> playerSet){
+    public PokerDesk(Set<Player> playerSet) throws Exception{
         if(playerSet.size()!=4){
             Log.d("sj", "PokerDesk: less than 4 players.");
         }
@@ -38,7 +38,12 @@ public class PokerDesk {
             int index = 1;
             Iterator<Player> iterator = playerSet.iterator();
             while(iterator.hasNext()){
-                players[index++] = iterator.next();
+                Player p =  iterator.next();
+                if(p.isListenerEmpty()){
+                    Log.d("sj", "PokerDesk player no listener:"+p.getName());
+                    throw new Exception("PokerDesk player no listener:"+p.getName());
+                }
+                players[index++] = p;
             }
             shuffle();
             putPoker();

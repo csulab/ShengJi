@@ -111,10 +111,10 @@ public class Player{
         mPokerList.addAll(mHeartsList);
         mPokerList.addAll(mSpadeList);
         mPokerList.addAll(mMainPokerList);
+        notifyPlayerEvent(new PlayerEvent(this));
     }
     //拿牌
     public void takePoker(Poker p,int CurrentRound){
-        notifyPlayerEvent(new PlayerEvent(this, p));
         if(p.getmCardSize() > 14 || p.getmCardSize() == CurrentRound){
             if(mMainPokerList.size()==0){
                 mMainPokerList.add(p);
@@ -264,6 +264,7 @@ public class Player{
 //        //埋掉底牌
 //        return null;
 //    }
+
     public String toString(){
         String str = "";
 		/*for(Poker p:mPokerList){
@@ -345,4 +346,7 @@ public class Player{
         this.listener = listener;
     }
 
+    public boolean isListenerEmpty(){
+        return listener == null;
+    }
 }

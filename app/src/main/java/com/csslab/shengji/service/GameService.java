@@ -12,6 +12,10 @@ import com.csslab.shengji.core.PlayerEvent;
 import com.csslab.shengji.core.PokerDesk;
 import com.csslab.shengji.tools.ClientManagement;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,6 +28,7 @@ import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.jar.JarException;
 
 public class GameService extends Service {
     private  int count = 0;
@@ -67,8 +72,8 @@ public class GameService extends Service {
                                 p.setSeat(player_count);
                                 client_map.put(p,s);
                                 players[player_count] = p;
-                                sendSrvMsg(p,ClientManagement.GAME_START_TIPS+"|"+"Welcome,"+p.getName()+",your seat is "+player_count);
                                 try{
+                                    sendToPlayer(p,ClientManagement.GAME_START_TIPS,"欢迎你，"+p.getName()+"！分配的座位号是"+player_count);
                                     Thread.sleep(1000);
                                 }
                                 catch (InterruptedException ex){
@@ -77,22 +82,17 @@ public class GameService extends Service {
                                 if(player_count == 4){
                                     try{
                                         Thread.sleep(1000);
-                                    }
-                                    catch (InterruptedException ex){
-                                        Log.d("sj", "run "+ex.toString());
-                                    }
-                                    Log.d("sj","start game right now.");
-                                    sendAll(ClientManagement.GAME_START_TIPS+"|"+"start game right now.");
-                                    try{
+                                        Log.d("sj","start game right now.");
+                                        sendToPlayer(ClientManagement.GAME_START_TIPS,"游戏即将开始！");
+                                        beginGame();
                                         Thread.sleep(1000);
                                     }
                                     catch (InterruptedException ex){
                                         Log.d("sj", "run "+ex.toString());
                                     }
-                                    beginGame();
                                 }
                                 else{
-                                    sendAll(ClientManagement.GAME_START_TIPS+"|"+"waitting for other "+(4-player_count)+" player(s)");
+                                    sendToPlayer(ClientManagement.GAME_START_TIPS,"等待其他"+(4-player_count)+"个玩家加入！");
                                     Log.d("sj", "waitting for other "+(4-player_count)+" players");
                                 }
                                 new Thread(new ServerReceiver(p)).start();
@@ -107,7 +107,7 @@ public class GameService extends Service {
                 isServer = true;
             }
         }
-        protected void sendAll(String msg){
+        private void sendAll(String msg){
             for(Map.Entry<Player,Socket> entry:client_map.entrySet()){
                 try{
                     DataOutputStream dos = new DataOutputStream(entry.getValue().getOutputStream());
@@ -119,7 +119,30 @@ public class GameService extends Service {
                 }
             }
         }
-        protected void sendSrvMsg(Player player,String msg){
+        //send to all player
+        protected void sendToPlayer(int Protocol,String data){
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("protocol",Protocol);
+                jsonObject.put("data",data);
+                sendAll(jsonObject.toString());
+            }
+            catch (JSONException jex){
+                Log.d("sj", "sendToPlayer "+jex.toString());
+            }
+        }
+        protected void sendToPlayer(Player player,int Protocol,String data){
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("protocol",Protocol);
+                jsonObject.put("data",data);
+                sendSrvMsg(player,jsonObject.toString());
+            }
+            catch (JSONException jex){
+                Log.d("sj", "sendToPlayer "+jex.toString());
+            }
+        }
+        private void sendSrvMsg(Player player,String msg){
             try{
                 DataOutputStream dos =new DataOutputStream(client_map.get(player).getOutputStream());
                 dos.writeUTF(msg);
@@ -140,9 +163,9 @@ public class GameService extends Service {
             for(Map.Entry<Player,Socket> entry:client_map.entrySet()){
                 entry.getKey().setPlayerEvent(new OnPlayerTakedListener() {
                     @Override
-                    public void onTaked(PlayerEvent event) {
-                        //sendSrvMsg((Player)event.getSource(), ClientManagement.TAKEING+"|"+event.getNewPoker());
-                        sendSrvMsg((Player)event.getSource(), ClientManagement.TAKEING+"|"+event.getNewPoker().toJSONString());
+                    public void onTaking(PlayerEvent event) {
+                        String raw_data = ((Player)event.getSource()).getPokerListJsonString();
+                        sendToPlayer(ClientManagement.TAKEING,raw_data);
                     }
                 });
             }
@@ -215,16 +238,13 @@ public class GameService extends Service {
             Log.d("sj", "Server receive!");
             while(true){
                 try{
-                    //synchronized (this){
                     String str = dis.readUTF();
                     if(str != null){
-                        //srvQueue.offer(str);
                         Log.d("sj","server rcv:"+str);
                     }
-                    //}
                 }
                 catch (IOException ex){
-                    //System.out.println("Server Rcv Error:"+ex.toString());
+                    Log.d("sj", "run "+ex.toString());
                 }
             }
         }

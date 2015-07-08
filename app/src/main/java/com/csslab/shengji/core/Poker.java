@@ -2,8 +2,12 @@ package com.csslab.shengji.core;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2015/7/7 0007.
@@ -161,5 +165,33 @@ public class Poker {
             }
             return color;
         }
+    }
+    public static Poker parse(JSONObject json){
+        try{
+            Poker p = new Poker(Poker.PokerColor.values()[json.getInt("color")],
+                    json.getInt("size"),json.getString("img"));
+            p.setValue(json.getInt("value"));
+            return p;
+        }
+        catch (JSONException jex){
+            Log.d("sj", "run "+jex.toString());
+        }
+        return null;
+    }
+
+    public static List<Poker> parseList(String json_data){
+        try{
+            JSONArray jsonArray = new JSONArray(json_data);
+            List<Poker> list = new ArrayList<>();
+            for(int i=0;i<jsonArray.length();i++){
+                Poker p = parse(jsonArray.getJSONObject(i));
+                list.add(p);
+            }
+            return list;
+        }
+        catch (JSONException jex){
+            Log.d("sj", "run "+jex.toString());
+        }
+        return null;
     }
 }

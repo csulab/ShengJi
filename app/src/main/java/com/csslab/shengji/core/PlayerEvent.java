@@ -7,7 +7,6 @@ import java.util.EventObject;
  */
 public class PlayerEvent extends EventObject {
     private Poker mPoker;
-    private final int POKER_SUM = 25;
     public PlayerEvent(Object source,Poker p) {
         super(source);
         this.mPoker = p;

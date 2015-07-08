@@ -2,6 +2,10 @@ package com.csslab.shengji.core;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -288,6 +292,34 @@ public class Player{
         return str;
     }
 
+    public String toJsonString(){
+        try{
+            JSONObject jsonInfo = new JSONObject();
+            jsonInfo.put("name",name);
+            jsonInfo.put("seat",seat);
+            jsonInfo.put("poker_list",getPokerListJsonString());
+            return jsonInfo.toString();
+        }
+        catch (JSONException jex){
+            Log.d("jex", "toJsonString: "+jex.toString());
+        }
+        return  null;
+    }
+    public String getPokerListJsonString(){
+        try{
+            JSONArray jsonArray = new JSONArray();
+            for(Poker p:getAllList()){
+                JSONObject jsonPoker = new JSONObject(p.toJSONString());
+                jsonArray.put(jsonPoker);
+            }
+            return jsonArray.toString();
+        }
+        catch (JSONException jex){
+            Log.d("jex", "toJsonString: "+jex.toString());
+        }
+        return null;
+    }
+
     public List<Poker> getAllList(){
 //        while(mPokerList.size()<25);
         return mPokerList;
@@ -302,7 +334,7 @@ public class Player{
     public void notifyPlayerEvent(PlayerEvent event){
         if(listener != null)
         {
-            listener.onTaked(event);
+            listener.onTaking(event);
         }
         else{
             Log.d("sj", name + " OnGetcardListener is null");

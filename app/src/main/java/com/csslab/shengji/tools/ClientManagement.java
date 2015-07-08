@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.csslab.shengji.core.Poker;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -15,6 +16,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2015/7/7 0007.
@@ -38,6 +41,18 @@ public class ClientManagement {
         mHandler = h;
         rcvThread = new Thread(new clientWorker());
         rcvThread.start();
+    }
+
+    public void setPlayerUserName(String name){
+
+    }
+
+    public void playPoker(Poker p){
+
+    }
+
+    private void sendMsg(String data){
+
     }
 
     public void stop(){
@@ -84,25 +99,15 @@ public class ClientManagement {
                     String str = dis.readUTF();
                     if(str != null){
                         isServerCanRead = true;
-                        Log.d("sj","rcvWoker:"+str);
-                        String[] msg = str.split("\\|");
-                        //Log.d("sj", "rcvWoker:"+str+","+msg.length+","+msg[0]+","+msg[1]);
+                        Log.d("sj","run:"+str);
                         Message m = mHandler.obtainMessage();
-                        m.what = Integer.parseInt(msg[0]);
-                        if(m.what == TAKEING){
-                            try{
-                                JSONObject json = new JSONObject(msg[1]);
-                                Poker p = new Poker(Poker.PokerColor.values()[json.getInt("color")],
-                                        json.getInt("size"),json.getString("img"));
-                                p.setValue(json.getInt("value"));
-                                m.obj = p;
-                            }
-                            catch (JSONException jex){
-                                Log.d("sj", "run "+jex.toString());
-                            }
+                        try{
+                            JSONObject jsonObject = new JSONObject(str);
+                            m.what = jsonObject.getInt("protocol");
+                            m.obj = jsonObject.getString("data");
                         }
-                        else{
-                            m.obj = msg[1];
+                        catch (JSONException jex){
+                            Log.d("sj", "run "+jex.toString());
                         }
                         mHandler.sendMessage(m);
                         //测试：回发给服务端

@@ -40,9 +40,9 @@ public class PokerDesk {
             while(iterator.hasNext()){
                 players[index++] = iterator.next();
             }
+            shuffle();
+            putPoker();
         }
-        shuffle();
-        putPoker();
     }
     public PokerDesk(Player player1,Player player2,Player player3,Player player4){
         player1.setSeat(1);

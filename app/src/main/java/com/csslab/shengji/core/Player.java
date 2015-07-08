@@ -51,7 +51,7 @@ public class Player{
     public String getName() {
         return name;
     }
-
+    public void setName(String _name){this.name = _name;}
     public void SetRoundPoker(int currentRound,int currentColor){
         this.roundPoker = new Poker(Poker.PokerColor.values()[currentColor],currentRound);
     }

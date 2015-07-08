@@ -41,15 +41,28 @@ public class ClientManagement {
     }
 
     public void setPlayerUserName(String name){
-
+        while(clientSocket == null);
+        sendMsg(MessageManagement.W_SET_NAME,name);
     }
 
     public void playPoker(Poker p){
 
     }
 
-    private void sendMsg(String data){
-
+    private void sendMsg(int protocol,String data){
+        try{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("protocol",protocol);
+            jsonObject.put("data",data);
+            dos.writeUTF(jsonObject.toString());
+            dos.flush();
+        }
+        catch (JSONException jex){
+            Log.d("sj", "sendMsg "+jex.toString());
+        }
+        catch (IOException ex){
+            Log.d("sj", ex.toString());
+        }
     }
 
     public void stop(){

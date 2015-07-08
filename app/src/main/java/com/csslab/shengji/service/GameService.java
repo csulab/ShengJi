@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import com.csslab.shengji.core.OnPlayerTakedListener;
@@ -93,6 +94,7 @@ public class GameService extends Service {
                                     }
                                 }
                                 else{
+
                                     sendToPlayer(MessageManagement.R_GAME_TIPS,"等待其他"+(4-player_count)+"个玩家加入！");
                                     Log.d("sj", "waitting for other "+(4-player_count)+" players");
                                 }
@@ -260,15 +262,37 @@ public class GameService extends Service {
                 Log.d("sj", "ServerReceiver "+ex.toString());
             }
         }
+        public void parse(String json){
+            if(json != null){
+                try {
+                    JSONObject jsonObject = new JSONObject(json);
+                    int protocol = jsonObject.getInt("protocol");
+                    switch (protocol){
+                        case MessageManagement.W_SET_NAME:
+                            player.setName(jsonObject.getString("name"));
+                            //jsonObject = new JSONObject();
+                            //jsonObject.put()
+                            //gameBinder.sendToPlayer();
+                            break;
+                        default:
+                            Log.d("sj", "parse error:no such protocol");
+                            break;
+                    }
+                }
+                catch (JSONException jex){
+                    Log.d("sj", "run "+jex.toString());
+                }
+
+            }
+        }
         @Override
         public void run() {
             Log.d("sj", "Server receive!");
             while(true){
                 try{
                     String str = dis.readUTF();
-                    if(str != null){
-                        Log.d("sj","server rcv:"+str);
-                    }
+                    parse(str);
+                    Log.d("sj","server rcv:"+str);
                 }
                 catch (IOException ex){
                     Log.d("sj", "run "+ex.toString());

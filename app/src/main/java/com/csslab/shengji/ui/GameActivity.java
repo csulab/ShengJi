@@ -41,15 +41,14 @@ public class GameActivity extends Activity {
     private ImageView[] imageViews, south_images, north_images, west_images, east_images;
     private boolean[] select_flag;
     private RelativeLayout main_poker_layout, east_pPoker_layout, south_pPoker_layout,
-            west_pPoker_layout, north_pPoker_layout;
+            west_pPoker_layout, north_pPoker_layout, center_pPoker_layout;
     private boolean isSouthEmpty, isCardEmpty, isPlaceCard, canShout;
     private TextView west_pName, east_pName, south_pName, north_pName, current_poker,
-            current_score, statistics, remain_poker;
+            current_score, statistics, remain_poker, text_tips;
     private LinearLayout reselect, send_poker, place_poker, look_poker, shout_poker;
     private Integer currentRound, currentColor = 0;
     private Poker.PokerColor pokerColor = null;
     private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
-    private Player sPlayer;
 
     private String sIP = "";
     private final int SERVER_PORT = 8191;
@@ -158,9 +157,14 @@ public class GameActivity extends Activity {
 
     }
 
+    /**
+     *  提示连接状态及座位号
+     * @param msg
+     */
     private void showTips(String msg){
         Toast.makeText(GameActivity.this,msg,Toast.LENGTH_SHORT).show();
     }
+
     /**
      * 重写返回键
      *
@@ -187,8 +191,6 @@ public class GameActivity extends Activity {
             return super.onKeyDown(keyCode, event);
         }
     }
-
-
 
     /**
      * 设置本方扑克牌位置及牌面
@@ -320,6 +322,7 @@ public class GameActivity extends Activity {
         north_pPoker_layout = (RelativeLayout) findViewById(R.id.north_pPoker);
         south_pPoker_layout = (RelativeLayout) findViewById(R.id.south_pPoker);
         east_pPoker_layout = (RelativeLayout) findViewById(R.id.east_pPoker);
+        center_pPoker_layout = (RelativeLayout) findViewById(R.id.center_pPoker);
 
         RelativeLayout.LayoutParams wlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
         wlp.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -333,10 +336,17 @@ public class GameActivity extends Activity {
         RelativeLayout.LayoutParams elp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
         elp.addRule(RelativeLayout.CENTER_VERTICAL);
 
+        RelativeLayout.LayoutParams clp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
+        clp.addRule(RelativeLayout.CENTER_IN_PARENT);
+
         west_pPoker_layout.setLayoutParams(wlp);
         north_pPoker_layout.setLayoutParams(nlp);
         south_pPoker_layout.setLayoutParams(slp);
         east_pPoker_layout.setLayoutParams(elp);
+        center_pPoker_layout.setLayoutParams(clp);
+
+        // 初始化提示信息
+        text_tips = (TextView) findViewById(R.id.text_tips);
 
         // 初始化重选按钮
         reselect = (LinearLayout) findViewById(R.id.btn_reselect);

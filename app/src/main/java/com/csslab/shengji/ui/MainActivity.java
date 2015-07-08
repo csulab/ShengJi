@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
                         Intent intent = new Intent();
                         intent.setClass(MainActivity.this,GameActivity.class);
                         intent.putExtra("gameHost",true);
+                        intent.putExtra("playerName", playerName);
                         startActivity(intent);
                     }
                 });
@@ -77,6 +78,7 @@ public class MainActivity extends Activity {
                         Intent intent = new Intent();
                         intent.setClass(MainActivity.this,GameActivity.class);
                         intent.putExtra("gameHost",false);
+                        intent.putExtra("playerName", playerName);
                         startActivity(intent);
                     }
                 });

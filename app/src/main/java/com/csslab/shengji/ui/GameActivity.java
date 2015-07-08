@@ -45,7 +45,8 @@ public class GameActivity extends Activity {
     private boolean isSouthEmpty, isCardEmpty, isPlaceCard, canShout;
     private TextView west_pName, east_pName, south_pName, north_pName, current_poker,
             current_score, statistics, remain_poker, text_tips;
-    private LinearLayout reselect, send_poker, place_poker, look_poker, shout_poker;
+    private LinearLayout btn_reselect, btn_send_poker, btn_place_poker, btn_look_poker,
+            btn_shout_poker;
     private Integer currentRound, currentColor = 0;
     private Poker.PokerColor pokerColor = null;
     private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
@@ -193,6 +194,109 @@ public class GameActivity extends Activity {
     }
 
     /**
+     * 初始化所有布局及控件
+     */
+    public void setAllLayout() {
+        // 获取屏幕宽度和高度
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        dw = dm.widthPixels;
+        dh = dm.heightPixels;
+
+        // 计算扑克牌的宽度和高度像素，以及左边扑克牌露出的宽度像素
+        card_height = dh * 2 / 9;
+        card_width = card_height / 74 * 56;
+        left_card_width1 = (dw * 5 / 6 - card_width) / 12;
+        left_card_width2 = (dw * 5 / 6 - card_width) / 16;
+
+        // 本方扑克牌摆放位置的布局
+        main_poker_layout = (RelativeLayout) findViewById(R.id.main_poker_layout);
+
+        // 打出的扑克牌的布局
+        west_pPoker_layout = (RelativeLayout) findViewById(R.id.west_pPoker);
+        north_pPoker_layout = (RelativeLayout) findViewById(R.id.north_pPoker);
+        south_pPoker_layout = (RelativeLayout) findViewById(R.id.south_pPoker);
+        east_pPoker_layout = (RelativeLayout) findViewById(R.id.east_pPoker);
+        center_pPoker_layout = (RelativeLayout) findViewById(R.id.center_pPoker);
+
+        RelativeLayout.LayoutParams wlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
+        wlp.addRule(RelativeLayout.CENTER_VERTICAL);
+
+        RelativeLayout.LayoutParams nlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
+        nlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+
+        RelativeLayout.LayoutParams slp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
+        slp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+        RelativeLayout.LayoutParams elp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
+        elp.addRule(RelativeLayout.CENTER_VERTICAL);
+
+        RelativeLayout.LayoutParams clp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
+        clp.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        west_pPoker_layout.setLayoutParams(wlp);
+        north_pPoker_layout.setLayoutParams(nlp);
+        south_pPoker_layout.setLayoutParams(slp);
+        east_pPoker_layout.setLayoutParams(elp);
+        center_pPoker_layout.setLayoutParams(clp);
+
+        // 初始化提示信息
+        text_tips = (TextView) findViewById(R.id.text_tips);
+
+        // 初始化重选按钮
+        btn_reselect = (LinearLayout) findViewById(R.id.btn_reselect);
+        btn_reselect.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
+        btn_reselect.setX(dw / 20 * 5);
+        btn_reselect.setVisibility(View.INVISIBLE);
+
+        // 初始化打牌按钮
+        btn_send_poker = (LinearLayout) findViewById(R.id.btn_send_poker);
+        btn_send_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
+        btn_send_poker.setX(dw / 20 * 7);
+        btn_send_poker.setVisibility(View.INVISIBLE);
+
+        // 初始化埋牌按钮
+        btn_place_poker = (LinearLayout) findViewById(R.id.btn_place_poker);
+        btn_place_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
+        btn_place_poker.setX(dw / 20 * 3);
+        btn_place_poker.setVisibility(View.GONE);
+
+        // 初始化叫牌按钮
+        btn_shout_poker = (LinearLayout) findViewById(R.id.btn_shout_poker);
+        btn_shout_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
+        btn_shout_poker.setX(dw / 20 * 3);
+        btn_shout_poker.setVisibility(View.INVISIBLE);
+
+        // 初始化查看底牌按钮
+        btn_look_poker = (LinearLayout) findViewById(R.id.btn_look_poker);
+        btn_look_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
+        btn_look_poker.setX(dw / 20 * 9);
+        btn_look_poker.setVisibility(View.INVISIBLE);
+
+        // 初始化玩家昵称
+        west_pName = (TextView) findViewById(R.id.west_pName);
+        east_pName = (TextView) findViewById(R.id.east_pName);
+        north_pName = (TextView) findViewById(R.id.north_pName);
+        south_pName = (TextView) findViewById(R.id.south_pName);
+
+        // 初始化所有统计数据
+        current_poker = (TextView) findViewById(R.id.current_poker);
+        current_score = (TextView) findViewById(R.id.current_score);
+        statistics = (TextView) findViewById(R.id.statistics);
+        remain_poker = (TextView) findViewById(R.id.remain_poker);
+
+        // 设置本方牌为空
+        isSouthEmpty = true;
+        isCardEmpty = true;
+
+        // 设置为非埋牌状态
+        isPlaceCard = false;
+
+        // 初始化为可叫牌
+        canShout = true;
+    }
+
+    /**
      * 设置本方扑克牌位置及牌面
      *
      * @param pokerList 传入的扑克牌列表
@@ -259,10 +363,6 @@ public class GameActivity extends Activity {
         }
 
         // 设置按钮是否显示
-//        setPlaceCardButton();
-//        setReselectButton();
-//        setSendButton();
-//        setLookCardButton();
 
         // 更新得分及余牌数量
 //        setAllStatistics();
@@ -299,101 +399,63 @@ public class GameActivity extends Activity {
     }
 
     /**
-     * 初始化所有布局及控件
+     *  设置埋牌按钮
      */
-    public void setAllLayout() {
-        // 获取屏幕宽度和高度
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        dw = dm.widthPixels;
-        dh = dm.heightPixels;
+    public void setPlacePokerBt() {
+        if(mPokerList.size() > 25) {
+            btn_place_poker.setVisibility(View.VISIBLE);
+            btn_place_poker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 点击埋牌按钮的处理代码
+                }
+            });
+        } else {
+            btn_place_poker.setVisibility(View.GONE);
+        }
+    }
 
-        // 计算扑克牌的宽度和高度像素，以及左边扑克牌露出的宽度像素
-        card_height = dh * 2 / 9;
-        card_width = card_height / 74 * 56;
-        left_card_width1 = (dw * 5 / 6 - card_width) / 12;
-        left_card_width2 = (dw * 5 / 6 - card_width) / 16;
+    /**
+     *  处理叫牌按钮
+     */
+    public void setShoutPokerBt() {
+        if(mPokerList.size() > 25) {
+            btn_shout_poker.setVisibility(View.GONE);
+        } else {
+            if(canShout) {
+                btn_shout_poker.setVisibility(View.VISIBLE);
+                btn_shout_poker.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 点击叫牌按钮的处理代码
+                        Toast.makeText(GameActivity.this, "叫牌", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                btn_shout_poker.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
 
-        // 本方扑克牌摆放位置的布局
-        main_poker_layout = (RelativeLayout) findViewById(R.id.main_poker_layout);
+    /**
+     *  设置重选按钮
+     */
+    public void setReselectBt() {
 
-        // 打出的扑克牌的布局
-        west_pPoker_layout = (RelativeLayout) findViewById(R.id.west_pPoker);
-        north_pPoker_layout = (RelativeLayout) findViewById(R.id.north_pPoker);
-        south_pPoker_layout = (RelativeLayout) findViewById(R.id.south_pPoker);
-        east_pPoker_layout = (RelativeLayout) findViewById(R.id.east_pPoker);
-        center_pPoker_layout = (RelativeLayout) findViewById(R.id.center_pPoker);
+    }
 
-        RelativeLayout.LayoutParams wlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
-        wlp.addRule(RelativeLayout.CENTER_VERTICAL);
+    /**
+     *  设置出牌按钮
+     */
+    public void setSendPokerBt() {
 
-        RelativeLayout.LayoutParams nlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
-        nlp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+    }
 
-        RelativeLayout.LayoutParams slp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
-        slp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+    /**
+     *  设置看底牌按钮
+     */
+    public void setLookPokerBt() {
 
-        RelativeLayout.LayoutParams elp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
-        elp.addRule(RelativeLayout.CENTER_VERTICAL);
-
-        RelativeLayout.LayoutParams clp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dh / 27 * 4);
-        clp.addRule(RelativeLayout.CENTER_IN_PARENT);
-
-        west_pPoker_layout.setLayoutParams(wlp);
-        north_pPoker_layout.setLayoutParams(nlp);
-        south_pPoker_layout.setLayoutParams(slp);
-        east_pPoker_layout.setLayoutParams(elp);
-        center_pPoker_layout.setLayoutParams(clp);
-
-        // 初始化提示信息
-        text_tips = (TextView) findViewById(R.id.text_tips);
-
-        // 初始化重选按钮
-        reselect = (LinearLayout) findViewById(R.id.btn_reselect);
-        reselect.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
-        reselect.setX(dw / 20 * 5);
-
-        // 初始化打牌按钮
-        send_poker = (LinearLayout) findViewById(R.id.btn_send_poker);
-        send_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
-        send_poker.setX(dw / 20 * 7);
-
-        // 初始化埋牌按钮
-        place_poker = (LinearLayout) findViewById(R.id.btn_place_poker);
-        place_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
-        place_poker.setX(dw / 20 * 3);
-
-        // 初始化叫牌按钮
-        shout_poker = (LinearLayout) findViewById(R.id.btn_shout_poker);
-        shout_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
-        shout_poker.setX(dw / 20 * 3);
-
-        // 初始化查看底牌按钮
-        look_poker = (LinearLayout) findViewById(R.id.btn_look_poker);
-        look_poker.setLayoutParams(new LinearLayout.LayoutParams(dw / 10, ViewGroup.LayoutParams.MATCH_PARENT));
-        look_poker.setX(dw / 20 * 9);
-
-        // 初始化玩家昵称
-        west_pName = (TextView) findViewById(R.id.west_pName);
-        east_pName = (TextView) findViewById(R.id.east_pName);
-        north_pName = (TextView) findViewById(R.id.north_pName);
-        south_pName = (TextView) findViewById(R.id.south_pName);
-
-        // 初始化所有统计数据
-        current_poker = (TextView) findViewById(R.id.current_poker);
-        current_score = (TextView) findViewById(R.id.current_score);
-        statistics = (TextView) findViewById(R.id.statistics);
-        remain_poker = (TextView) findViewById(R.id.remain_poker);
-
-        // 设置本方牌为空
-        isSouthEmpty = true;
-        isCardEmpty = true;
-
-        // 设置为非埋牌状态
-        isPlaceCard = false;
-
-        // 初始化为可叫牌
-        canShout = true;
     }
 
 }

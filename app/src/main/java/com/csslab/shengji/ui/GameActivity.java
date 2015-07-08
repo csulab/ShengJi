@@ -51,6 +51,7 @@ public class GameActivity extends Activity {
     private Integer currentRound, currentColor = 0;
     private Poker.PokerColor pokerColor = null;
     private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
+    private String mPlayerName;
 
     private String sIP = "";
     private final int SERVER_PORT = 8191;
@@ -65,6 +66,7 @@ public class GameActivity extends Activity {
             sIP = "127.0.0.1";
             client = new ClientManagement(sIP,SERVER_PORT,mHandler);
             Log.d("sj", "--Service Connected--");
+            client.setPlayerUserName(mPlayerName);
         }
 
         @Override
@@ -92,13 +94,11 @@ public class GameActivity extends Activity {
             if (activity != null) {
                 switch (msg.what) {
                     case MessageManagement.R_GAME_TIPS:
-                        activity.showTips((String)msg.obj);
+                        activity.showTips((String)msg.obj);    //提示游戏创建状态、等待状态
                         break;
                     case MessageManagement.R_TAKEING:
-//                        Poker p = (Poker)msg.obj;
-//                        activity.mPokerList.add(p);
                         activity.mPokerList = Poker.parseList(msg.obj.toString());
-                        activity.setCard(activity.mPokerList);
+                        activity.setCard(activity.mPokerList);     //把摸到的牌显示出来
                         break;
                     default:
                         break;
@@ -122,6 +122,7 @@ public class GameActivity extends Activity {
         setContentView(R.layout.activity_game);
 
         Intent intent = getIntent();
+        mPlayerName = intent.getStringExtra("playerName");
         if(intent.getBooleanExtra("gameHost",false)){
             Intent srv_intent = new Intent();
             srv_intent.setAction("com.csslab.shengji.service.GAME_SERVICE");
@@ -139,6 +140,7 @@ public class GameActivity extends Activity {
             sIP = (serverIP & 0xff)+"."+(serverIP>>8 & 0xff)+"."+(serverIP>>16 & 0xff)+".1";
             //client = new ClientManagement(sIP,SERVER_PORT,mHandler);//真机
             client = new ClientManagement("10.0.2.2",8192,mHandler);//模拟器客户端测试专用
+            client.setPlayerUserName(mPlayerName);
         }
 
         // 初始化所有布局和参数

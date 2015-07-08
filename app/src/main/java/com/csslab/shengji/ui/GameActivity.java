@@ -94,8 +94,9 @@ public class GameActivity extends Activity {
                         activity.showTips((String)msg.obj);
                         break;
                     case ClientManagement.TAKEING:
-                        Poker p = (Poker)msg.obj;
-                        activity.mPokerList.add(p);
+//                        Poker p = (Poker)msg.obj;
+//                        activity.mPokerList.add(p);
+                        activity.mPokerList = Poker.parseList(msg.obj.toString());
                         activity.setCard(activity.mPokerList);
                         break;
                     default:
@@ -135,7 +136,7 @@ public class GameActivity extends Activity {
             WifiInfo wInfo = ((WifiManager)getSystemService(WIFI_SERVICE)).getConnectionInfo();
             int serverIP =wInfo.getIpAddress();
             sIP = (serverIP & 0xff)+"."+(serverIP>>8 & 0xff)+"."+(serverIP>>16 & 0xff)+".1";
-            //client = new ClientManagement(sIP,8192,mHandler);
+            //client = new ClientManagement(sIP,SERVER_PORT,mHandler);//真机
             client = new ClientManagement("10.0.2.2",8192,mHandler);//模拟器客户端测试专用
         }
 

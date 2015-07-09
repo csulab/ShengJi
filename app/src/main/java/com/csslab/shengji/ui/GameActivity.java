@@ -94,11 +94,11 @@ public class GameActivity extends Activity {
             if (activity != null) {
                 switch (msg.what) {
                     case MessageManagement.R_USER_READY:
-                        List<Player> playerList = Player.parse(msg.obj.toString());
-                        for(Player p:playerList){
-//                            cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";
-
-                        }
+                        //List<Player> playerList = Player.parse(msg.obj.toString());
+//                        for(Player p:playerList){
+////                            cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";
+//
+//                        }
                         break;
                     case MessageManagement.R_GAME_TIPS:
                         activity.showTips((String)msg.obj);    //提示游戏创建状态、等待状态

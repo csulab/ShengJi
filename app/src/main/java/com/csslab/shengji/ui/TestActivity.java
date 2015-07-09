@@ -141,8 +141,12 @@ public class TestActivity extends Activity {
                         }
                         ((TestActivity) mActivity.get()).showPoker(cur_poker);
                         break;
+                    case MessageManagement.R_USER_SIT:
+                        Player player = Player.parse(msg.obj.toString());
+                        ((TestActivity)mActivity.get()).showTips(player.getName()+","+player.getSeat());
+                        break;
                     case MessageManagement.R_USER_READY:
-                        List<Player> playerList = Player.parse(msg.obj.toString());
+                        List<Player> playerList = Player.parseList(msg.obj.toString());
                         String cur_usr = "";
                         for(Player p:playerList){
                             cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";

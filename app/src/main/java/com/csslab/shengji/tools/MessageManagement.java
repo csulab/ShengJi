@@ -19,15 +19,17 @@ public class MessageManagement {
     //read msg,player can read
     public final static int R_GAME_CREATED = 1001;//游戏创建成功，可以开始设置用户名了
     public final static int R_GAME_TIPS = 1000;//游戏提示
-    public final static int R_USER_READY = 999;
-    public final static int R_DESK_READY = 998;
-    public final static int R_SHOUT_READY = 997;
+    public final static int R_USER_READY = 999;//其他用户准备加入
+    public final static int R_USER_SIT = 898;//用户(自己)入座
+    public final static int R_DESK_READY = 998;//牌桌准备好，可以出牌
+    public final static int R_SHOUT_OTHER = 997;//其他用户喊牌
+    public final static int R_SHOUT_RESULT = 898;//用户（自己）喊牌结果,如果最终喊成功由该用户摸底
     public final static int R_TAKEING = 996;//用户摸牌
     public final static int R_TAKEED = 995;//摸牌完毕
-    public final static int R_REVOLUTION = 994;//反牌
+    public final static int R_REVOLUTION_RESULT = 994;//反牌
     public final static int R_PLAYING = 993;//出牌阶段
     public final static int R_PLAY_TURN = 992;//轮到出牌
-    public final static int R_SCORE = 991;//轮到出牌
+    public final static int R_SCORE = 991;//分数更新
     public final static int R_NEW_TURN = 990;//新一轮出牌开始
     public final static int R_NEW_ROUND = 899;//新的一局开始
 

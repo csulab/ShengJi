@@ -310,11 +310,24 @@ public class Player{
             return jsonArray.toString();
         }
         catch (JSONException jex){
-            Log.d("sj", "parse "+jex);
+            Log.d("sj", "convert "+jex);
         }
         return null;
     }
-    public static List<Player> parse(String json){
+    public static Player parse(String json){
+        Player p = null;
+        try{
+            JSONObject jsonObject = new JSONObject(json);
+            String j_name = jsonObject.getString("name");
+            int j_seat = jsonObject.getInt("seat");
+            p = new Player(j_name,j_seat);
+        }
+        catch (JSONException jex){
+            Log.d("sj", "parse "+jex);
+        }
+        return  p;
+    }
+    public static List<Player> parseList(String json){
         List<Player> list = new ArrayList<>();
         try{
             JSONArray jsonArray = new JSONArray(json);
@@ -325,7 +338,7 @@ public class Player{
             return list;
         }
         catch (JSONException jex){
-            Log.d("sj", "parse "+jex);
+            Log.d("sj", "parse list "+jex);
         }
         return null;
     }

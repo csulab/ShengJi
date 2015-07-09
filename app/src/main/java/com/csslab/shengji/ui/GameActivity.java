@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.Poker;
-import com.csslab.shengji.core.PokerDesk;
 import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
 import com.csslab.shengji.tools.MessageManagement;
@@ -116,12 +115,12 @@ public class GameActivity extends Activity {
                             activity.showTips("等待" + (4 - playerList.size()) + "位玩家加入");
                         }
                         break;
-                    case MessageManagement.R_GAME_TIPS:
-                        activity.showTips((String)msg.obj);    //提示游戏状态
+                    case MessageManagement.R_GAME_TIPS:     //提示游戏状态
+                        activity.showTips((String)msg.obj);
                         break;
-                    case MessageManagement.R_TAKEING:
+                    case MessageManagement.R_TAKEING:      //把摸到的牌显示出来
                         activity.mPokerList = Poker.parseList(msg.obj.toString());
-                        activity.setCard(activity.mPokerList);     //把摸到的牌显示出来
+                        activity.setCard(activity.mPokerList);
                         break;
                     default:
                         break;

@@ -48,7 +48,7 @@ public class GameActivity extends Activity {
             current_score, statistics, remain_poker, text_tips;
     private LinearLayout btn_reselect, btn_send_poker, btn_place_poker, btn_look_poker,
             btn_shout_poker;
-    private Integer currentRound, currentColor = 0;
+    private Integer currentRound, currentColor = 0, current_seat = 0;
     private Poker.PokerColor pokerColor = null;
     private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
     private String mPlayerName;

@@ -34,7 +34,6 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         playerName = editText.getText().toString();
-                        Toast.makeText(MainActivity.this, playerName, Toast.LENGTH_SHORT).show();
                     }
                 });
                 settingNameDB.setNegativeButton("取消", null);
@@ -56,6 +55,9 @@ public class MainActivity extends Activity {
         btn_start_game.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(playerName.equals("")) {
+                    Toast.makeText(MainActivity.this, "您尚未设置用户名，用户名将由系统分配", Toast.LENGTH_SHORT).show();
+                }
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 alertDialogBuilder.setTitle("提示");
                 alertDialogBuilder.setMessage("创建游戏还是加入游戏？");

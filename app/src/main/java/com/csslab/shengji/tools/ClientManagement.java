@@ -41,7 +41,7 @@ public class ClientManagement {
     }
 
     public void setPlayerUserName(String name){
-        while(clientSocket == null);
+        while(dos == null);
         sendMsg(MessageManagement.W_SET_NAME,name);
     }
 
@@ -79,7 +79,7 @@ public class ClientManagement {
                     clientSocket = new Socket(srv_host,srv_port);
                     if(clientSocket.isClosed() == true && clientSocket.isConnected() == false){
                         Message msg = mHandler.obtainMessage();
-                        msg.what = 0;
+                        msg.what = MessageManagement.O_ERROR;
                         msg.obj = "无法和游戏创建者连接上，请确认是否加入热点连接！";
                         mHandler.sendMessage(msg);
                     }
@@ -103,6 +103,7 @@ public class ClientManagement {
         }
         @Override
         public void run() {
+            //向服务端发送新用户消息
             while(true) {
                 Boolean isServerCanRead = false;
                 try {
@@ -120,14 +121,6 @@ public class ClientManagement {
                             Log.d("sj", "run "+jex.toString());
                         }
                         mHandler.sendMessage(m);
-                        //测试：回发给服务端
-                        /*try{
-                            dos.writeUTF("client rcv:"+str);
-                            dos.flush();
-                        }
-                        catch (IOException ex){
-                            Log.d("sj", ex.toString());
-                        }*/
                     }
                 }
                 catch (IOException ex) {

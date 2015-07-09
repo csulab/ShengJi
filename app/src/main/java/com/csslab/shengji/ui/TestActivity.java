@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.Poker;
 import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
@@ -44,6 +45,7 @@ public class TestActivity extends Activity {
             gameBinder.createServer();
             sIP = "127.0.0.1";
             client = new ClientManagement(sIP,SERVER_PORT,mHandler);
+            client.setPlayerUserName("韬");
             Log.d("sj", "--Service Connected--");
         }
 
@@ -90,8 +92,9 @@ public class TestActivity extends Activity {
                         WifiInfo wInfo = ((WifiManager)getSystemService(WIFI_SERVICE)).getConnectionInfo();
                         int serverIP =wInfo.getIpAddress();
                         sIP = (serverIP & 0xff)+"."+(serverIP>>8 & 0xff)+"."+(serverIP>>16 & 0xff)+".1";
-                        //client = new ClientManagement(sIP,8192,mHandler);
+                        //client = new ClientManagement(sIP,SERVER_PORT,mHandler);//真机使用
                         client = new ClientManagement("10.0.2.2",8192,mHandler);//模拟器客户端测试专用
+                        client.setPlayerUserName("韬");
                     }
                 });
                 alertDialogBuilder.show();
@@ -124,7 +127,8 @@ public class TestActivity extends Activity {
         public void handleMessage(Message msg) {
             if(mActivity.get() != null){
                 switch (msg.what){
-                    case MessageManagement.R_GAME_TIPS://显示原始消息
+                    case MessageManagement.O_ERROR:
+                    case MessageManagement.R_GAME_TIPS://显示消息
                         Log.d("sj", "Test Activity.handleMessage "+msg.obj.toString());
                         ((TestActivity)mActivity.get()).showTips((String) msg.obj);
                         break;
@@ -136,6 +140,14 @@ public class TestActivity extends Activity {
                             cur_poker += p.toString()+" ";
                         }
                         ((TestActivity) mActivity.get()).showPoker(cur_poker);
+                        break;
+                    case MessageManagement.R_USER_READY:
+                        List<Player> playerList = Player.parse(msg.obj.toString());
+                        String cur_usr = "";
+                        for(Player p:playerList){
+                            cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";
+                        }
+                        ((TestActivity)mActivity.get()).showTips(cur_usr);
                         break;
                     default:
                         break;

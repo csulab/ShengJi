@@ -73,7 +73,8 @@ public class GameService extends Service {
                                 Player p = new Player("player"+player_count);
                                 p.setSeat(player_count);
                                 client_map.put(p,s);
-                                players[player_count] = p;
+                                //players[player_count] = p;
+                                //考虑先不发消息，等客户端发送W_NEW_USER_JOIN消息，然后回发R_USER_READY消息
                                 try{
                                     sendToPlayer(p, MessageManagement.R_GAME_TIPS,"欢迎你，"+p.getName()+"！分配的座位号是"+player_count);
                                     Thread.sleep(1000);
@@ -94,7 +95,6 @@ public class GameService extends Service {
                                     }
                                 }
                                 else{
-
                                     sendToPlayer(MessageManagement.R_GAME_TIPS,"等待其他"+(4-player_count)+"个玩家加入！");
                                     Log.d("sj", "waitting for other "+(4-player_count)+" players");
                                 }
@@ -167,7 +167,7 @@ public class GameService extends Service {
                 entry.getKey().setPlayerEvent(new OnPlayerTakedListener() {
                     @Override
                     public void onTaking(PlayerEvent event) {
-                        String raw_data = ((Player)event.getSource()).getPokerListJsonString();
+                        String raw_data = ((Player)event.getSource()).toPokerListJsonString();
                         Log.d("listener", "onTaking ");
                         sendToPlayer(entry.getKey(),MessageManagement.R_TAKEING,raw_data);
                     }
@@ -254,6 +254,7 @@ public class GameService extends Service {
             }
         }
         public ServerReceiver(Player player){
+            this.player = player;
             this.socket = client_map.get(player);
             try{
                 dis = new DataInputStream(socket.getInputStream());
@@ -269,10 +270,8 @@ public class GameService extends Service {
                     int protocol = jsonObject.getInt("protocol");
                     switch (protocol){
                         case MessageManagement.W_SET_NAME:
-                            player.setName(jsonObject.getString("name"));
-                            //jsonObject = new JSONObject();
-                            //jsonObject.put()
-                            //gameBinder.sendToPlayer();
+                            player.setName(jsonObject.getString("data"));
+                            gameBinder.sendToPlayer(MessageManagement.R_USER_READY,Player.convertPlayerList(client_map.keySet()));
                             break;
                         default:
                             Log.d("sj", "parse error:no such protocol");
@@ -280,7 +279,7 @@ public class GameService extends Service {
                     }
                 }
                 catch (JSONException jex){
-                    Log.d("sj", "run "+jex.toString());
+                    Log.d("sj", "parse "+jex.toString());
                 }
 
             }

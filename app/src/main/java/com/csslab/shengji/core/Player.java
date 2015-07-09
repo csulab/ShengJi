@@ -7,7 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -40,6 +42,10 @@ public class Player{
 
     public Player(String name){
         this.name = name;
+    }
+    public Player(String name,int seat){
+        this.name = name;
+        this.seat = seat;
     }
     public void setSeat(int index){
         this.seat = index;
@@ -231,40 +237,6 @@ public class Player{
         }
         mPokerList.removeAll(pokerList);
     }
-    //出牌
-//    public List<Poker> playCard(Dictionary<Integer, List<Poker>> curDeskPoker){
-//        List<Poker> showPoker = new ArrayList<Poker>();
-//        if(curDeskPoker != null && curDeskPoker.size()>0){
-//            Boolean isFriendWin = true;
-//            //判断上家出牌
-//            //curDeskPoker.get(1)
-//            //上家牌某门花色里面绝对大
-//            //主牌里面绝对大
-//        }
-//        else{
-//            //如果没有上家
-//            //打对家缺的某一门花色
-//            //副牌有Ace 先出Ace
-//            //如果某门Ace已经出了，尝试打该门花色最大的牌
-//            //主牌超过3对，吊主
-//
-//        }
-//
-//
-//
-//        mPokerList.removeAll(showPoker);
-//        return showPoker;
-//    }
-    //抄底
-//    public void getBottomPoke(List<Poker> pokerList){
-//        mPokerList.addAll(pokerList);
-//    }
-    //埋底
-//    public List<Poker> putBottomPoker(){
-//        //埋掉底牌
-//        return null;
-//    }
-
     public String toString(){
         String str = "";
 		/*for(Poker p:mPokerList){
@@ -298,7 +270,7 @@ public class Player{
             JSONObject jsonInfo = new JSONObject();
             jsonInfo.put("name",name);
             jsonInfo.put("seat",seat);
-            jsonInfo.put("poker_list",getPokerListJsonString());
+            jsonInfo.put("poker_list",toPokerListJsonString());
             return jsonInfo.toString();
         }
         catch (JSONException jex){
@@ -306,7 +278,7 @@ public class Player{
         }
         return  null;
     }
-    public String getPokerListJsonString(){
+    public String toPokerListJsonString(){
         try{
             JSONArray jsonArray = new JSONArray();
             for(Poker p:getAllList()){
@@ -322,14 +294,41 @@ public class Player{
     }
 
     public List<Poker> getAllList(){
-//        while(mPokerList.size()<25);
         return mPokerList;
     }
 
-    public static Player GetPlayerBySeat(int seat){
+    public static Player getPlayerBySeat(int seat){
         return null;
     }
-
+    public static String convertPlayerList(Set<Player> list){
+        JSONArray jsonArray = new JSONArray();
+        try{
+            for(Player p:list){
+                JSONObject jsonObject = new JSONObject(p.toJsonString());
+                jsonArray.put(jsonObject);
+            }
+            return jsonArray.toString();
+        }
+        catch (JSONException jex){
+            Log.d("sj", "parse "+jex);
+        }
+        return null;
+    }
+    public static List<Player> parse(String json){
+        List<Player> list = new ArrayList<>();
+        try{
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                list.add(new Player(jsonObject.getString("name"),jsonObject.getInt("seat")));
+            }
+            return list;
+        }
+        catch (JSONException jex){
+            Log.d("sj", "parse "+jex);
+        }
+        return null;
+    }
     //事件相关操作
     //通知处理事件
     public void notifyPlayerEvent(PlayerEvent event){

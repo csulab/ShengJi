@@ -42,7 +42,7 @@ public class GameActivity extends Activity {
     private boolean[] select_flag;
     private RelativeLayout main_poker_layout, east_pPoker_layout, south_pPoker_layout,
             west_pPoker_layout, north_pPoker_layout, center_pPoker_layout;
-    private boolean isSouthEmpty, isCardEmpty, isPlaceCard, canShout;
+    private boolean isSouthEmpty, isCardEmpty, isPlaceCard;
     private TextView west_pName, east_pName, south_pName, north_pName, current_poker,
             current_score, statistics, remain_poker, text_tips;
     private LinearLayout btn_reselect, btn_send_poker, btn_place_poker, btn_look_poker,
@@ -121,6 +121,10 @@ public class GameActivity extends Activity {
                     case MessageManagement.R_TAKEING:      //把摸到的牌显示出来
                         activity.mPokerList = Poker.parseList(msg.obj.toString());
                         activity.setCard(activity.mPokerList);
+                        break;
+                    case MessageManagement.R_SHOUT:      //处理叫牌
+                        activity.pokerColorList = Poker.parsePokerColor(msg.obj.toString());
+                        activity.setShoutPokerBt(true);
                         break;
                     default:
                         break;
@@ -318,9 +322,6 @@ public class GameActivity extends Activity {
 
         // 设置为非埋牌状态
         isPlaceCard = false;
-
-        // 初始化为可叫牌
-        canShout = true;
     }
 
     /**
@@ -445,22 +446,44 @@ public class GameActivity extends Activity {
     /**
      *  处理叫牌按钮
      */
-    public void setShoutPokerBt() {
-        if(mPokerList.size() > 25) {
-            btn_shout_poker.setVisibility(View.GONE);
-        } else {
-            if(canShout) {
-                btn_shout_poker.setVisibility(View.VISIBLE);
-                btn_shout_poker.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // 点击叫牌按钮的处理代码
-                        Toast.makeText(GameActivity.this, "叫牌", Toast.LENGTH_SHORT).show();
+    public void setShoutPokerBt(boolean canShout) {
+        if (canShout) {
+            btn_shout_poker.setVisibility(View.VISIBLE);
+            btn_shout_poker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 点击叫牌按钮的处理代码
+                    AlertDialog.Builder shoutPokerDialog = new AlertDialog.Builder(GameActivity.this);
+                    shoutPokerDialog.setTitle("请选择叫牌");
+                    String[] str = new String[pokerColorList.size()];
+                    for(int i = 0; i < pokerColorList.size(); i++) {
+                        switch(pokerColorList.get(i)) {
+                            case DIAMONDS:
+                                str[i] = "方块";
+                                break;
+                            case CLUB:
+                                str[i] = "梅花";
+                                break;
+                            case HEARTS:
+                                str[i] = "红桃";
+                                break;
+                            case SPADE:
+                                str[i] = "黑桃";
+                                break;
+                            case JOKER:
+                                str[i] = "无主";
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                });
-            } else {
-                btn_shout_poker.setVisibility(View.INVISIBLE);
-            }
+                    shoutPokerDialog.setItems(str, null);
+                    shoutPokerDialog.setNegativeButton("取消", null);
+                    shoutPokerDialog.show();
+                }
+            });
+        } else {
+            btn_shout_poker.setVisibility(View.INVISIBLE);
         }
     }
 

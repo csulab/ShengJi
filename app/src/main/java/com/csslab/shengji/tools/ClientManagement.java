@@ -39,13 +39,17 @@ public class ClientManagement {
         rcvThread = new Thread(new clientWorker());
         rcvThread.start();
     }
-
+    //用户设置昵称
     public void setPlayerUserName(String name){
         while(dos == null);
         sendMsg(MessageManagement.W_SET_NAME,name);
     }
+    //用户打牌
+    public void playPoker(List<Poker> list){
 
-    public void playPoker(Poker p){
+    }
+    //用户埋底
+    public void putBottom(List<Poker> list){
 
     }
 

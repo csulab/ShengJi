@@ -213,7 +213,8 @@ public class Poker {
         try{
             JSONArray jsonArray = new JSONArray();
             for(int i=0;i<list.size();i++){
-                jsonArray.put(i,list.get(0).ordinal());
+                jsonArray.put(i,list.get(i).ordinal());
+                Log.e("convertPokerColor", "convertPokerColor ");
             }
             return jsonArray.toString();
         }

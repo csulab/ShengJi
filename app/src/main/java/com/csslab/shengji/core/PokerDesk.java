@@ -23,12 +23,13 @@ public class PokerDesk {
     private Stack<Poker> mPokerStack = new Stack<Poker>();//桌上的牌
     private List<Poker> shoutPoker = new ArrayList<Poker>();//当前叫牌
     private Player[] players = new Player[5];
-    private int boss = 1;//本轮从谁打起
+    private int boss = 1;//本轮先手，从谁打起
     private int score = 0;//当前得分
     private int currentRound = 3;
     private int currentColor = 5;//默认无花色，无主,黑,红,梅,方543210
     private int currentItem = 0;//当前叫牌选项，0代表未叫牌，1代表一主叫牌，2,3,4,5代表两方块、梅花、红桃、黑桃叫牌，6,7代表两小王、两大王叫牌，8代表三王叫牌
     private final int CARD_INTERVAL = 150;//每位玩家发牌时间间隔
+    private Player shotPlayer = null;
     /*public PokerDesk(){
 
     }*/
@@ -120,20 +121,40 @@ public class PokerDesk {
         }
 
     }
-    // 取牌测试
+    // 获取牌桌的牌
     public Stack<Poker> getmPokerStack() {
         return mPokerStack;
     }
-    public int getCurrentRound() {
-        return currentRound;
+    public List<Poker> getRemainPoker(){
+        List<Poker> list = new ArrayList<>();
+        for(Poker p:mPokerStack){
+            list.add(p);
+        }
+        return list;
     }
+
+    public void setCurrentColor(int currentColor) {
+        this.currentColor = currentColor;
+    }
+
+    public void setCurrentItem(int currentItem) {
+        this.currentItem = currentItem;
+    }
+
+    public void setCurrentRound(int currentRound) {
+        this.currentRound = currentRound;
+    }
+
+    public void setShotPlayer(Player shotPlayer) {
+        this.shotPlayer = shotPlayer;
+    }
+
+    public Player getShotPlayer() {
+        return shotPlayer;
+    }
+
     //发牌
     private void putPoker(){
-		/*for(Player p:players){
-			if(p != null){
-				p.setSpeialCard(currentRound);
-			}
-		}*/
         Log.d("sj", "putPoker");
 
         new Thread(){

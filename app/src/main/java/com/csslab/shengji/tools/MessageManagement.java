@@ -22,7 +22,8 @@ public class MessageManagement {
     public final static int R_USER_READY = 999;//其他用户准备加入
     public final static int R_USER_SIT = 898;//用户(自己)入座
     public final static int R_DESK_READY = 998;//牌桌准备好，可以出牌
-    public final static int R_SHOUT = 997;//玩家喊牌消息
+    public final static int R_SHOUT = 997;//玩家可以喊牌
+    public final static int R_SHOUT_MSG = 897;//其他用户喊牌消息
     public final static int R_SHOUT_RESULT = 898;//用户（自己）喊牌结果,如果最终喊成功由该用户摸底
     public final static int R_TAKEING = 996;//用户摸牌
     public final static int R_TAKEED = 995;//摸牌完毕

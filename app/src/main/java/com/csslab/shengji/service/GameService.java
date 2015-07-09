@@ -169,6 +169,7 @@ public class GameService extends Service {
                         String raw_data = player.toPokerListJsonString();
                         Log.d("listener", "onTaking ");
                         sendToPlayer(entry.getKey(),MessageManagement.R_TAKEING,raw_data);
+                        //提示用户喊牌
                         Boolean canCall = Rule.canCallPoker(player.getAllList(),
                                 pd.getStatus().get("round"),
                                 pd.getStatus().get("item"));
@@ -176,9 +177,17 @@ public class GameService extends Service {
                             List<Poker.PokerColor> pcList = Rule.getCallPokerColor(player.getAllList(),
                                     pd.getStatus().get("round"),
                                     pd.getStatus().get("item"));
+                            String str = "";
+                            for (Poker.PokerColor p:pcList){
+                                str += p.ordinal()+" ";
+                            }
+                            Log.e("color", "onTaking "+str);
                             String shout_data = Poker.convertPokerColor(pcList);
+                            Log.e("shout_data", "onTaking "+shout_data);
                             sendToPlayer(entry.getKey(),MessageManagement.R_SHOUT,shout_data);
                         }
+                        //庄家去底牌
+
                     }
 
                     @Override
@@ -285,9 +294,9 @@ public class GameService extends Service {
                         case MessageManagement.W_SET_NAME:
                             if(jsonObject.getString("data").trim().length() > 0){
                                 player.setName(jsonObject.getString("data"));
-                                gameBinder.sendToPlayer(MessageManagement.R_USER_READY,
-                                        Player.convertPlayerList(client_map.keySet()));
                             }
+                            gameBinder.sendToPlayer(MessageManagement.R_USER_READY,
+                                    Player.convertPlayerList(client_map.keySet()));
                             break;
                         default:
                             Log.d("sj", "parse error:no such protocol");

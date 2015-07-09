@@ -155,7 +155,11 @@ public class TestActivity extends Activity {
                         break;
                     case MessageManagement.R_SHOUT:
                         List<Poker.PokerColor> pcColors = Poker.parsePokerColor(msg.obj.toString());
-                        ((TestActivity)mActivity.get()).showTips(pcColors.size()+"");
+                        String str = "";
+                        for (Poker.PokerColor p:pcColors){
+                            str += p.ordinal()+" ";
+                        }
+                        ((TestActivity)mActivity.get()).showTips(str);
                         break;
                     default:
                         break;

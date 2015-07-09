@@ -93,15 +93,31 @@ public class GameActivity extends Activity {
             GameActivity activity = mActivity.get();
             if (activity != null) {
                 switch (msg.what) {
-                    case MessageManagement.R_USER_READY:
-                        //List<Player> playerList = Player.parse(msg.obj.toString());
-//                        for(Player p:playerList){
-////                            cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";
-//
-//                        }
+                    case MessageManagement.R_USER_SIT:   //获取当前座位号
+                        activity.current_seat = Player.parse(msg.obj.toString()).getSeat();
+                        break;
+                    case MessageManagement.R_USER_READY:     //设置用户名
+                        List<Player> playerList = Player.parseList(msg.obj.toString());
+                        for(Player p: playerList) {
+                            if(p.getSeat() == activity.current_seat) {
+                                activity.south_pName.setText(p.getName());
+                            }
+                            if((p.getSeat() % 4) == (activity.current_seat + 1) % 4) {
+                                activity.east_pName.setText(p.getName());
+                            }
+                            if((p.getSeat() % 4) == (activity.current_seat + 2) % 4) {
+                                activity.north_pName.setText(p.getName());
+                            }
+                            if((p.getSeat() % 4) == (activity.current_seat + 3) % 4) {
+                                activity.west_pName.setText(p.getName());
+                            }
+                        }
+                        if(playerList.size() != 4) {
+                            activity.showTips("等待" + (4 - playerList.size()) + "位玩家加入");
+                        }
                         break;
                     case MessageManagement.R_GAME_TIPS:
-                        activity.showTips((String)msg.obj);    //提示游戏创建状态、等待状态
+                        activity.showTips((String)msg.obj);    //提示游戏状态
                         break;
                     case MessageManagement.R_TAKEING:
                         activity.mPokerList = Poker.parseList(msg.obj.toString());

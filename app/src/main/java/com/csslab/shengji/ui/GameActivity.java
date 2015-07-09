@@ -93,6 +93,13 @@ public class GameActivity extends Activity {
             GameActivity activity = mActivity.get();
             if (activity != null) {
                 switch (msg.what) {
+                    case MessageManagement.R_USER_READY:
+                        List<Player> playerList = Player.parse(msg.obj.toString());
+                        for(Player p:playerList){
+//                            cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";
+
+                        }
+                        break;
                     case MessageManagement.R_GAME_TIPS:
                         activity.showTips((String)msg.obj);    //提示游戏创建状态、等待状态
                         break;
@@ -128,10 +135,10 @@ public class GameActivity extends Activity {
             srv_intent.setAction("com.csslab.shengji.service.GAME_SERVICE");
             boolean flag = bindService(srv_intent,srv_conn,BIND_AUTO_CREATE);
             if(flag == false){
-                Toast.makeText(GameActivity.this, "错误：无法创建游戏！", Toast.LENGTH_SHORT).show();
+                showTips("错误：无法创建游戏！");
             }
             else{
-                Toast.makeText(GameActivity.this,"创建游戏成功，请打开热点等待其他玩家加入...",Toast.LENGTH_SHORT).show();
+                showTips("创建游戏成功，请打开热点等待其他玩家加入...");
             }
         }
         else{
@@ -163,7 +170,7 @@ public class GameActivity extends Activity {
     }
 
     /**
-     *  提示连接状态及座位号
+     *  提示信息
      * @param msg
      */
     private void showTips(String msg){
@@ -190,6 +197,7 @@ public class GameActivity extends Activity {
                 }
             });
             alertDialogBuilder.setNegativeButton("取消", null);
+            alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.show();
             return true;
         } else {

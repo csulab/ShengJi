@@ -127,7 +127,7 @@ public class TestActivity extends Activity {
         public void handleMessage(Message msg) {
             if(mActivity.get() != null){
                 switch (msg.what){
-                    case MessageManagement.O_ERROR:
+                    case MessageManagement.O_ERROR://错误消息
                     case MessageManagement.R_GAME_TIPS://显示消息
                         Log.d("sj", "Test Activity.handleMessage "+msg.obj.toString());
                         ((TestActivity)mActivity.get()).showTips((String) msg.obj);
@@ -152,6 +152,10 @@ public class TestActivity extends Activity {
                             cur_usr += p.getName()+"进入"+p.getSeat()+"号座!";
                         }
                         ((TestActivity)mActivity.get()).showTips(cur_usr);
+                        break;
+                    case MessageManagement.R_SHOUT:
+                        List<Poker.PokerColor> pcColors = Poker.parsePokerColor(msg.obj.toString());
+                        ((TestActivity)mActivity.get()).showTips(pcColors.size()+"");
                         break;
                     default:
                         break;

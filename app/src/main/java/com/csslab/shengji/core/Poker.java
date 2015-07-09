@@ -194,4 +194,46 @@ public class Poker {
         }
         return null;
     }
+    public static String convertList(List<Poker> list){
+//        try{
+//            JSONArray jsonArray = new JSONArray(json_data);
+//            List<Poker> list = new ArrayList<>();
+//            for(int i=0;i<jsonArray.length();i++){
+//                Poker p = parse(jsonArray.getJSONObject(i));
+//                list.add(p);
+//            }
+//            return list;
+//        }
+//        catch (JSONException jex){
+//            Log.d("sj", "run "+jex.toString());
+//        }
+        return null;
+    }
+    public static String convertPokerColor(List<PokerColor> list){
+        try{
+            JSONArray jsonArray = new JSONArray();
+            for(int i=0;i<list.size();i++){
+                jsonArray.put(i,list.get(0).ordinal());
+            }
+            return jsonArray.toString();
+        }
+        catch (JSONException jex){
+            Log.d("sj", "run "+jex.toString());
+        }
+        return null;
+    }
+    public static List<PokerColor> parsePokerColor(String json_data){
+        try{
+            JSONArray jsonArray = new JSONArray(json_data);
+            List<PokerColor> list = new ArrayList<>();
+            for(int i = 0;i<jsonArray.length();i++){
+                list.add(PokerColor.values()[jsonArray.getInt(i)]);
+            }
+            return list;
+        }
+        catch (JSONException jex){
+            Log.d("sj", "run "+jex.toString());
+        }
+        return null;
+    }
 }

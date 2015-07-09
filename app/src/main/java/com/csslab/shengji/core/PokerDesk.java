@@ -4,8 +4,10 @@ package com.csslab.shengji.core;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
@@ -24,7 +26,8 @@ public class PokerDesk {
     private int boss = 1;//本轮从谁打起
     private int score = 0;//当前得分
     private int currentRound = 3;
-    private int currentColor = 3;//黑红梅方3210
+    private int currentColor = 5;//默认无花色，无主,黑,红,梅,方543210
+    private int currentItem = 0;//当前叫牌选项，0代表未叫牌，1代表一主叫牌，2,3,4,5代表两方块、梅花、红桃、黑桃叫牌，6,7代表两小王、两大王叫牌，8代表三王叫牌
     private final int CARD_INTERVAL = 150;//每位玩家发牌时间间隔
     /*public PokerDesk(){
 
@@ -104,10 +107,6 @@ public class PokerDesk {
         king.setmPokerImage("a5_17");
         initPokerList.add(king);
         initPokerList.add(king);
-		/*System.out.println("initlist.size():"+initPokerList.size());
-		for(Poker p:initPokerList){
-			System.out.println(p.toString());
-		}*/
         return initPokerList;
     }
     //洗牌
@@ -116,18 +115,11 @@ public class PokerDesk {
         Random rnd = new Random();
         while(initPokerList.size() > 0){
             int cardIndex = rnd.nextInt(initPokerList.size());
-            //System.out.println("init.size:"+initPokerList.size());
-            //System.out.println(cardIndex);
             this.mPokerStack.push(initPokerList.get(cardIndex));
             initPokerList.remove(cardIndex);
         }
-		/*System.out.println("mPokerList.size():"+mPokerList.size());
-		for(int i=0;i<mPokerList.size();i++){
-			System.out.println(mPokerList.get(i).toString());
-		}*/
 
     }
-
     // 取牌测试
     public Stack<Poker> getmPokerStack() {
         return mPokerStack;
@@ -218,23 +210,12 @@ public class PokerDesk {
         }
         return str;
     }
-    //暂未用到
-//    public void judge(){
-//        //抄底埋底阶段
-//        //过主阶段
-//        //打牌阶段
-//        while(true){
-//            int restNum = 0;
-//            for(int i=1;i<players.length;i++){
-//                restNum += players[i].restPoker();
-//            }
-//            if(restNum > 0){
-//
-//            }
-//            else{
-//                break;
-//            }
-//        }
-//
-//    }
+    //牌桌状态
+    public Map<String,Integer> getStatus(){
+        Map<String,Integer> map = new HashMap<>();
+        map.put("round",currentRound);
+        map.put("item",currentItem);
+        map.put("color",currentColor);
+        return map;
+    }
 }

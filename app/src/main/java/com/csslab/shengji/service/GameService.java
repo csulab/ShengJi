@@ -10,7 +10,9 @@ import android.util.Log;
 import com.csslab.shengji.core.OnPlayerTakedListener;
 import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.PlayerEvent;
+import com.csslab.shengji.core.Poker;
 import com.csslab.shengji.core.PokerDesk;
+import com.csslab.shengji.core.Rule;
 import com.csslab.shengji.tools.ClientManagement;
 import com.csslab.shengji.tools.MessageManagement;
 
@@ -25,6 +27,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Vector;
@@ -70,14 +73,11 @@ public class GameService extends Service {
                                 }
                                 Socket s = Server.accept();
                                 player_count++;
-                                //Player p = new Player("player"+player_count);
-                                //p.setSeat(player_count);
                                 Player p = new Player("player"+player_count,player_count);
                                 client_map.put(p,s);
                                 //players[player_count] = p;
                                 //考虑先不发消息，等客户端发送W_NEW_USER_JOIN消息，然后回发R_USER_READY消息
                                 try{
-                                    //sendToPlayer(p, MessageManagement.R_GAME_TIPS,"欢迎你，"+p.getName()+"！分配的座位号是"+player_count);
                                     sendToPlayer(p, MessageManagement.R_USER_SIT,p.toJsonString());
                                     Thread.sleep(1000);
                                 }
@@ -96,10 +96,6 @@ public class GameService extends Service {
                                         Log.d("sj", "run "+ex.toString());
                                     }
                                 }
-//                                else{
-//                                    sendToPlayer(MessageManagement.R_GAME_TIPS,"等待其他"+(4-player_count)+"个玩家加入！");
-//                                    Log.d("sj", "waitting for other "+(4-player_count)+" players");
-//                                }
                                 new Thread(new ServerReceiver(p)).start();
                             }
                             catch (IOException ex){
@@ -169,9 +165,20 @@ public class GameService extends Service {
                 entry.getKey().setPlayerEvent(new OnPlayerTakedListener() {
                     @Override
                     public void onTaking(PlayerEvent event) {
-                        String raw_data = ((Player)event.getSource()).toPokerListJsonString();
+                        Player player = (Player)event.getSource();
+                        String raw_data = player.toPokerListJsonString();
                         Log.d("listener", "onTaking ");
                         sendToPlayer(entry.getKey(),MessageManagement.R_TAKEING,raw_data);
+                        Boolean canCall = Rule.canCallPoker(player.getAllList(),
+                                pd.getStatus().get("round"),
+                                pd.getStatus().get("item"));
+                        if(canCall){
+                            List<Poker.PokerColor> pcList = Rule.getCallPokerColor(player.getAllList(),
+                                    pd.getStatus().get("round"),
+                                    pd.getStatus().get("item"));
+                            String shout_data = Poker.convertPokerColor(pcList);
+                            sendToPlayer(entry.getKey(),MessageManagement.R_SHOUT,shout_data);
+                        }
                     }
 
                     @Override
@@ -197,6 +204,9 @@ public class GameService extends Service {
             }
             try{
                 pd = new PokerDesk(client_map.keySet());
+                for(final Map.Entry<Player,Socket> entry:client_map.entrySet()){
+                    entry.getKey().setDesk(pd);
+                }
             }
             catch (Exception ex){
                 Log.d("sj", "beginGame :"+ex.toString());

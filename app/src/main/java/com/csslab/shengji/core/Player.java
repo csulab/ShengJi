@@ -39,6 +39,7 @@ public class Player{
     private int seat;//座位号
     //当前回合打牌
     private Poker roundPoker;
+    private PokerDesk pokerDesk = null;
 
     public Player(String name){
         this.name = name;
@@ -46,6 +47,9 @@ public class Player{
     public Player(String name,int seat){
         this.name = name;
         this.seat = seat;
+    }
+    public void setDesk(PokerDesk pd){
+        this.pokerDesk = pd;
     }
     public void setSeat(int index){
         this.seat = index;

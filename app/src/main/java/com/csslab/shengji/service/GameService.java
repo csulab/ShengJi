@@ -298,6 +298,27 @@ public class GameService extends Service {
                             gameBinder.sendToPlayer(MessageManagement.R_USER_READY,
                                     Player.convertPlayerList(client_map.keySet()));
                             break;
+                        //设置用户喊牌
+                        case MessageManagement.W_SHOUT:
+                            Log.d("client shout poker", player.getName() + ": " + jsonObject.getString("data"));
+                            Integer pCallItem = Integer.parseInt(jsonObject.getString("data"));
+                            Integer pdCurrentItem = player.getPokerDesk().getStatus().get("item");
+                            if(pdCurrentItem == 0) {
+                                player.getPokerDesk().setCurrentItem(pCallItem);
+                                Log.d("client shout poker", player.getName() + ": " + "喊牌成功 " + pCallItem);
+                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG, player.getName() + " 喊 " + pCallItem);
+                            } else if(pdCurrentItem < 5 && pCallItem >= 5) {
+                                player.getPokerDesk().setCurrentItem(pCallItem);
+                                Log.d("client shout poker", player.getName() + ": " + "喊牌成功 " + pCallItem);
+                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG, player.getName() + " 喊 " + pCallItem);
+                            } else if(pdCurrentItem >= 5 && pCallItem > pdCurrentItem) {
+                                player.getPokerDesk().setCurrentItem(pCallItem);
+                                Log.d("client shout poker", player.getName() + ": " + "喊牌成功 " + pCallItem);
+                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG, player.getName() + " 喊 " + pCallItem);
+                            } else {
+                                Log.d("client shout poker", player.getName() + ": " + "喊牌失败");
+                            }
+                            break;
                         default:
                             Log.d("sj", "parse error:no such protocol");
                             break;

@@ -27,7 +27,7 @@ public class PokerDesk {
     private int score = 0;//当前得分
     private int currentRound = 3;
     private int currentColor = 5;//默认无花色，无主,黑,红,梅,方543210
-    private int currentItem = 0;//当前叫牌选项，0代表未叫牌，1代表一主叫牌，2,3,4,5代表两方块、梅花、红桃、黑桃叫牌，6,7代表两小王、两大王叫牌，8代表三王叫牌
+    private int currentItem = 0;//当前叫牌选项，0代表未叫牌，1,2,3,4代表一方块、一梅花、一红桃、一黑桃叫牌，5,6,7,8代表两方块、两梅花、两红桃、两黑桃叫牌，9,10表示两小王、两大王叫无主，11,12,13,14,15表示三王叫方块、梅花、红桃、黑桃、无主
     private final int CARD_INTERVAL = 150;//每位玩家发牌时间间隔
     private Player shotPlayer = null;
     /*public PokerDesk(){

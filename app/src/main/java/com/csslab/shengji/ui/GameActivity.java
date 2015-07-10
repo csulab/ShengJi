@@ -127,6 +127,9 @@ public class GameActivity extends Activity {
                         activity.pokerColorList = Poker.parsePokerColor(msg.obj.toString());
                         activity.setShoutPokerBt(true);
                         break;
+                    case MessageManagement.R_SHOUT_MSG:     //处理喊牌结果
+                        activity.showTips((String)msg.obj);
+                        break;
                     default:
                         break;
                 }
@@ -472,6 +475,7 @@ public class GameActivity extends Activity {
     private class PokerStyleListListener implements DialogInterface.OnClickListener{
         @Override
         public void onClick(DialogInterface dialog, int which) {
+            client.setShoutPoker(pokerColorList.get(which));
             showTips(pokerColorList.get(which) + "");
         }
     }

@@ -51,6 +51,10 @@ public class Player{
     public void setDesk(PokerDesk pd){
         this.pokerDesk = pd;
     }
+    // czc新增
+    public PokerDesk getPokerDesk() {
+        return pokerDesk;
+    }
     public void setSeat(int index){
         this.seat = index;
     }

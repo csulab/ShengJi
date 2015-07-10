@@ -44,6 +44,10 @@ public class ClientManagement {
         while(dos == null);
         sendMsg(MessageManagement.W_SET_NAME,name);
     }
+    //用户喊牌（czc新增）
+    public void setShoutPoker(Integer pokerItem) {
+        sendMsg(MessageManagement.W_SHOUT, pokerItem + "");
+    }
     //用户打牌
     public void playPoker(List<Poker> list){
 

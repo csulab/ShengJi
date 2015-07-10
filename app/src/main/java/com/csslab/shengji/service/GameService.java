@@ -174,15 +174,15 @@ public class GameService extends Service {
                                 pd.getStatus().get("round"),
                                 pd.getStatus().get("item"));
                         if(canCall){
-                            List<Poker.PokerColor> pcList = Rule.getCallPokerColor(player.getAllList(),
+                            List<Integer> psList = Rule.getCallPokerStyle(player.getAllList(),
                                     pd.getStatus().get("round"),
                                     pd.getStatus().get("item"));
                             String str = "";
-                            for (Poker.PokerColor p:pcList){
-                                str += p.ordinal()+" ";
+                            for (Integer i :psList){
+                                str += i +" ";
                             }
                             Log.e("color", "onTaking "+str);
-                            String shout_data = Poker.convertPokerColor(pcList);
+                            String shout_data = Poker.convertPokerColor(psList);
                             Log.e("shout_data", "onTaking "+shout_data);
                             sendToPlayer(entry.getKey(),MessageManagement.R_SHOUT,shout_data);
                         }

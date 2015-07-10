@@ -209,11 +209,12 @@ public class Poker {
 //        }
         return null;
     }
-    public static String convertPokerColor(List<PokerColor> list){
+    // czc修改
+    public static String convertPokerColor(List<Integer> list) {
         try{
             JSONArray jsonArray = new JSONArray();
             for(int i=0;i<list.size();i++){
-                jsonArray.put(i,list.get(i).ordinal());
+                jsonArray.put(i,list.get(i));
                 Log.e("convertPokerColor", "convertPokerColor ");
             }
             return jsonArray.toString();
@@ -223,12 +224,13 @@ public class Poker {
         }
         return null;
     }
-    public static List<PokerColor> parsePokerColor(String json_data){
+    // czc修改
+    public static List<Integer> parsePokerColor(String json_data){
         try{
             JSONArray jsonArray = new JSONArray(json_data);
-            List<PokerColor> list = new ArrayList<>();
+            List<Integer> list = new ArrayList<>();
             for(int i = 0;i<jsonArray.length();i++){
-                list.add(PokerColor.values()[jsonArray.getInt(i)]);
+                list.add(jsonArray.getInt(i));
             }
             return list;
         }

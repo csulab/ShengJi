@@ -154,10 +154,10 @@ public class TestActivity extends Activity {
                         ((TestActivity)mActivity.get()).showTips(cur_usr);
                         break;
                     case MessageManagement.R_SHOUT:
-                        List<Poker.PokerColor> pcColors = Poker.parsePokerColor(msg.obj.toString());
+                        List<Integer> pcColors = Poker.parsePokerColor(msg.obj.toString());
                         String str = "";
-                        for (Poker.PokerColor p:pcColors){
-                            str += p.ordinal()+" ";
+                        for (Integer i:pcColors){
+                            str += i +" ";
                         }
                         ((TestActivity)mActivity.get()).showTips(str);
                         break;

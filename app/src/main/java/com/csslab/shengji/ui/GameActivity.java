@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.csslab.shengji.core.Player;
 import com.csslab.shengji.core.Poker;
+import com.csslab.shengji.core.Rule;
 import com.csslab.shengji.service.GameService;
 import com.csslab.shengji.tools.ClientManagement;
 import com.csslab.shengji.tools.MessageManagement;
@@ -49,7 +50,7 @@ public class GameActivity extends Activity {
             btn_shout_poker;
     private Integer currentRound, currentColor = 0, current_seat = 0;
     private Poker.PokerColor pokerColor = null;
-    private List<Poker.PokerColor> pokerColorList = new ArrayList<Poker.PokerColor>();
+    private List<Integer> pokerColorList = new ArrayList<Integer>();
     private String mPlayerName;
 
     private String sIP = "";
@@ -390,8 +391,6 @@ public class GameActivity extends Activity {
             isCardEmpty = false;
         }
 
-        // 设置按钮是否显示
-
         // 更新得分及余牌数量
 //        setAllStatistics();
     }
@@ -455,35 +454,25 @@ public class GameActivity extends Activity {
                     // 点击叫牌按钮的处理代码
                     AlertDialog.Builder shoutPokerDialog = new AlertDialog.Builder(GameActivity.this);
                     shoutPokerDialog.setTitle("请选择叫牌");
-                    String[] str = new String[pokerColorList.size()];
-                    for(int i = 0; i < pokerColorList.size(); i++) {
-                        switch(pokerColorList.get(i)) {
-                            case DIAMONDS:
-                                str[i] = "方块";
-                                break;
-                            case CLUB:
-                                str[i] = "梅花";
-                                break;
-                            case HEARTS:
-                                str[i] = "红桃";
-                                break;
-                            case SPADE:
-                                str[i] = "黑桃";
-                                break;
-                            case JOKER:
-                                str[i] = "无主";
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    shoutPokerDialog.setItems(str, null);
+                    String[] str = Rule.pokerStyleToString(pokerColorList);
+                    shoutPokerDialog.setItems(str, new PokerStyleListListener());
                     shoutPokerDialog.setNegativeButton("取消", null);
+                    shoutPokerDialog.setCancelable(false);
                     shoutPokerDialog.show();
                 }
             });
         } else {
             btn_shout_poker.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     *  叫牌类型列表监听器
+     */
+    private class PokerStyleListListener implements DialogInterface.OnClickListener{
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            showTips(pokerColorList.get(which) + "");
         }
     }
 

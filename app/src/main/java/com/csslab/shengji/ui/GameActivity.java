@@ -49,7 +49,6 @@ public class GameActivity extends Activity {
     private LinearLayout btn_reselect, btn_send_poker, btn_place_poker, btn_look_poker,
             btn_shout_poker;
     private Integer currentRound, currentColor = 0, current_seat = 0;
-    private Poker.PokerColor pokerColor = null;
     private List<Integer> pokerColorList = new ArrayList<Integer>();
     private String mPlayerName;
 
@@ -119,6 +118,10 @@ public class GameActivity extends Activity {
                     case MessageManagement.R_GAME_TIPS:     //提示游戏状态
                         activity.showTips((String)msg.obj);
                         break;
+                    case MessageManagement.R_NEW_ROUND:    //设置当前打几
+                        activity.currentRound = Integer.parseInt((String)msg.obj);
+                        activity.setAllStatistics();
+                        break;
                     case MessageManagement.R_TAKEING:      //把摸到的牌显示出来
                         activity.mPokerList = Poker.parseList(msg.obj.toString());
                         activity.setCard(activity.mPokerList);
@@ -128,7 +131,11 @@ public class GameActivity extends Activity {
                         activity.setShoutPokerBt(true);
                         break;
                     case MessageManagement.R_SHOUT_MSG:     //处理喊牌结果
-                        activity.showTips((String)msg.obj);
+                        activity.setShoutPokerBt(false);
+                        String[] shoutMsg = Player.parseShoutMsg(msg.obj.toString());
+                        activity.currentColor = Integer.parseInt(shoutMsg[1]);
+                        activity.setAllStatistics();
+                        activity.showTips(shoutMsg[0] + " 喊 " + Rule.pokerStyleToString(activity.currentColor));
                         break;
                     default:
                         break;
@@ -476,7 +483,6 @@ public class GameActivity extends Activity {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             client.setShoutPoker(pokerColorList.get(which));
-            showTips(pokerColorList.get(which) + "");
         }
     }
 
@@ -499,6 +505,29 @@ public class GameActivity extends Activity {
      */
     public void setLookPokerBt() {
 
+    }
+
+    /**
+     *  设置所有统计数据
+     */
+    public void setAllStatistics() {
+        //设置当前打几
+        current_poker.setText("当前：" + currentRound);
+        if(currentColor == 1 || currentColor == 5 ||currentColor == 11) {
+            current_poker.setText("当前：方块" + currentRound);
+        }
+        if(currentColor == 2 || currentColor == 6 ||currentColor == 12) {
+            current_poker.setText("当前：梅花" + currentRound);
+        }
+        if(currentColor == 3 || currentColor == 7 ||currentColor == 13) {
+            current_poker.setText("当前：红桃" + currentRound);
+        }
+        if(currentColor == 4 || currentColor == 8 ||currentColor == 14) {
+            current_poker.setText("当前：黑桃" + currentRound);
+        }
+        if(currentColor == 9 || currentColor == 10 ||currentColor == 15) {
+            current_poker.setText("当前：无主" + currentRound);
+        }
     }
 
 }

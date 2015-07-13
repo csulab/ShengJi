@@ -384,4 +384,58 @@ public class Rule {
         return styleStr;
     }
 
+    public static  String pokerStyleToString(Integer pokerStyle) {
+        String styleStr = "";
+        switch (pokerStyle) {
+            case 1 :
+                styleStr = "方块";
+                break;
+            case 2 :
+                styleStr = "梅花";
+                break;
+            case 3 :
+                styleStr = "红桃";
+                break;
+            case 4 :
+                styleStr = "黑桃";
+                break;
+            case 5 :
+                styleStr = "方块（一对）";
+                break;
+            case 6 :
+                styleStr = "梅花（一对）";
+                break;
+            case 7 :
+                styleStr = "红桃（一对）";
+                break;
+            case 8 :
+                styleStr = "黑桃（一对）";
+                break;
+            case 9 :
+                styleStr = "无主（小王）";
+                break;
+            case 10 :
+                styleStr = "无主（大王）";
+                break;
+            case 11 :
+                styleStr = "方块（三王）";
+                break;
+            case 12 :
+                styleStr = "梅花（三王）";
+                break;
+            case 13 :
+                styleStr = "红桃（三王）";
+                break;
+            case 14 :
+                styleStr = "黑桃（三王）";
+                break;
+            case 15 :
+                styleStr = "无主（三王）";
+                break;
+            default:
+                break;
+        }
+        return styleStr;
+    }
+
 }

@@ -350,6 +350,33 @@ public class Player{
         }
         return null;
     }
+    //czc新增
+    public static String convertShoutMsg(String[] strings) {
+        JSONArray jsonArray = new JSONArray();
+        try{
+            jsonArray.put(0, strings[0]);
+            jsonArray.put(1, strings[1]);
+            return jsonArray.toString();
+        }
+        catch (JSONException jex){
+            Log.d("sj", "convert "+jex);
+        }
+        return null;
+    }
+    //czc新增
+    public static String[] parseShoutMsg(String json_data) {
+        try{
+            JSONArray jsonArray = new JSONArray(json_data);
+            String[] shoutMsg = new String[2];
+            shoutMsg[0] = jsonArray.getString(0);
+            shoutMsg[1] = jsonArray.getString(1);
+            return shoutMsg;
+        }
+        catch (JSONException jex){
+            Log.d("sj", "run "+jex.toString());
+        }
+        return null;
+    }
     //事件相关操作
     //通知处理事件
     public void notifyPlayerEvent(PlayerEvent event){

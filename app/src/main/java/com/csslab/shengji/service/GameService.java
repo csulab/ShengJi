@@ -90,6 +90,7 @@ public class GameService extends Service {
                                         Log.d("sj","start game right now.");
                                         sendToPlayer(MessageManagement.R_GAME_TIPS,"游戏即将开始！");
                                         beginGame();
+                                        sendToPlayer(MessageManagement.R_NEW_ROUND, pd.getStatus().get("round") + "");  //czc新增
                                         Thread.sleep(1000);
                                     }
                                     catch (InterruptedException ex){
@@ -173,7 +174,7 @@ public class GameService extends Service {
                         Boolean canCall = Rule.canCallPoker(player.getAllList(),
                                 pd.getStatus().get("round"),
                                 pd.getStatus().get("item"));
-                        if(canCall){
+                        if(canCall && player != pd.getShotPlayer()){
                             List<Integer> psList = Rule.getCallPokerStyle(player.getAllList(),
                                     pd.getStatus().get("round"),
                                     pd.getStatus().get("item"));
@@ -300,23 +301,21 @@ public class GameService extends Service {
                             break;
                         //设置用户喊牌
                         case MessageManagement.W_SHOUT:
-                            Log.d("client shout poker", player.getName() + ": " + jsonObject.getString("data"));
+                            Log.d("client shout", player.getName() + ": " + jsonObject.getString("data"));
                             Integer pCallItem = Integer.parseInt(jsonObject.getString("data"));
+                            String[] shoutMsg = new String[3];
+                            shoutMsg[0] = player.getName();
+                            shoutMsg[1] = pCallItem + "";
                             Integer pdCurrentItem = player.getPokerDesk().getStatus().get("item");
-                            if(pdCurrentItem == 0) {
+                            if (pdCurrentItem == 0 || (pdCurrentItem < 5 && pCallItem >= 5)
+                                    || (pdCurrentItem >= 5 && pCallItem > pdCurrentItem)) {
                                 player.getPokerDesk().setCurrentItem(pCallItem);
-                                Log.d("client shout poker", player.getName() + ": " + "喊牌成功 " + pCallItem);
-                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG, player.getName() + " 喊 " + pCallItem);
-                            } else if(pdCurrentItem < 5 && pCallItem >= 5) {
-                                player.getPokerDesk().setCurrentItem(pCallItem);
-                                Log.d("client shout poker", player.getName() + ": " + "喊牌成功 " + pCallItem);
-                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG, player.getName() + " 喊 " + pCallItem);
-                            } else if(pdCurrentItem >= 5 && pCallItem > pdCurrentItem) {
-                                player.getPokerDesk().setCurrentItem(pCallItem);
-                                Log.d("client shout poker", player.getName() + ": " + "喊牌成功 " + pCallItem);
-                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG, player.getName() + " 喊 " + pCallItem);
+                                player.getPokerDesk().setShotPlayer(player);
+                                Log.d("client shout", player.getName() + ": " + "喊牌成功 " + pCallItem);
+                                gameBinder.sendToPlayer(MessageManagement.R_SHOUT_MSG,
+                                        Player.convertShoutMsg(shoutMsg));
                             } else {
-                                Log.d("client shout poker", player.getName() + ": " + "喊牌失败");
+                                Log.d("client shout", player.getName() + ": " + "喊牌失败");
                             }
                             break;
                         default:
